@@ -1,6 +1,6 @@
 {
-  "name": "electron-react-boilerplate",
-  "description": "A foundation for scalable desktop apps",
+  "name": "SMS",
+  "description": "Student Management System",
   "keywords": [
     "electron",
     "boilerplate",
