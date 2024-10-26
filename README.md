@@ -1,2 +1,2 @@
-# SMS---Desktop
+# SMS - Desktop
 Student Management System
