@@ -27,7 +27,11 @@ export const mainSlice = createSlice({
         return state;
       }
       const newUser = action.payload as User;
-      state.users?.push(newUser);
+      if(state.users == null){
+        state.users = [newUser];
+      }else{
+        state.users?.push(newUser);
+      }
     })
 
     builder.addCase(deleteStudents.pending, (state, action) => {

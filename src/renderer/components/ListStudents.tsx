@@ -1,14 +1,16 @@
-import { Button, Col, Row, Table } from "antd";
+import { Button, Col, Row, Table, TableProps } from "antd";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../shared/RTK/hooks";
 import { deleteStudents, fetchAllUser } from "../shared/RTK/slices/mainSlice";
 
+
+
 const columns = [
   {
     title: 'Id',
     dataIndex: 'id',
-    key: 'id',
+    key: "id"
   },
   {
     title: 'Name',
@@ -39,7 +41,10 @@ export default function ListStudents(){
             delete all
           </Button>
       </Row>
-      <Table dataSource={users ?? []} columns={columns} />
+      <Table
+       dataSource={users?.map(user=> {return {key:user.Id,...user}}) ?? []}
+       columns={columns}
+       />
   </Col>
   </>
 }
