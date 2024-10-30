@@ -9,12 +9,14 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import server from '../../release/app/backend/server';
+import { exec, execFile } from 'child_process'
+// import server from '../../release/app/backend/server';
+import fs from 'fs';
 
 class AppUpdater {
   constructor() {
@@ -23,6 +25,14 @@ class AppUpdater {
     autoUpdater.checkForUpdatesAndNotify();
   }
 }
+
+
+const logDir = "C:\\Users\\Ahmed Medo\\Desktop\\New folder\\SMS---Desktop\\log"
+if (!fs.existsSync(logDir)){
+  fs.mkdirSync(logDir);
+}
+log.transports.file.resolvePath = () => path.join(logDir, 'app.log');
+
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -110,15 +120,44 @@ const createWindow = async () => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
-
+  mainWindow.webContents.openDevTools();
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
 };
 
+const serverPath = path.join(process.resourcesPath, 'resources' ,'server', 'server-win.exe');
+// const serverPath = "C:\\Users\\Ahmed Medo\\Desktop\\New folder\\SMS---Desktop\\release\\build\\win-unpacked\\resources\\resources\\server\\server-win.exe";
+
+let serverProcess:any;
+
+function startServerIfNotRunning() {
+
+  exec('netstat -an | find "3000"', (error, stdout, stderr) => {
+      console.log("result", stdout.length);
+      if (!stdout.includes('LISTENING')) {
+          serverProcess = execFile(`${serverPath}`, (error) => {
+            if (error) {
+              console.error('Error starting server:', error);
+            }
+        });
+        console.log('Server started');
+      }
+  });
+}
+
+function stopServer() {
+  if (serverProcess) {
+      serverProcess.kill(); // Terminate the server process
+  }
+}
+
 /**
  * Add event listeners...
  */
+app.on("before-quit",()=>{
+  stopServer();
+});
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
@@ -128,10 +167,12 @@ app.on('window-all-closed', () => {
   }
 });
 
+
 app
   .whenReady()
   .then(() => {
     createWindow();
+    startServerIfNotRunning();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
@@ -140,6 +181,5 @@ app
   })
   .catch(console.log);
 
-app.on('ready', () => {
-  server();
-});
+
+

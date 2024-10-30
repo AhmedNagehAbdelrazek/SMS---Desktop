@@ -15,9 +15,5 @@
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.21.1",
-    "sequelize": "^6.37.5",
-    "sqlite3": "^5.1.7"
   }
 }
