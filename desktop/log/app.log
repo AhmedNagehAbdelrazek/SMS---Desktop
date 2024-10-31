@@ -1,0 +1,23 @@
+[2024-10-30 04:46:54.808] [info]  C:\Users\Ahmed Medo\Desktop\New folder\SMS---Desktop\release\build\win-unpacked\resources\resources\server\server-win.exe
+[2024-10-30 04:46:54.906] [info]  Checking for update
+[2024-10-30 04:46:54.907] [info]  projectPath C:\Users\Ahmed Medo\Desktop\New folder\SMS---Desktop\release\build\win-unpacked
+[2024-10-30 04:46:54.908] [info]  serverPath C:\Users\Ahmed Medo\Desktop\New folder\SMS---Desktop\release\build\win-unpacked\resources\resources\server\server-win.exe
+[2024-10-30 04:46:55.043] [info]  trying to listen to the server
+[2024-10-30 04:46:55.606] [info]  Server started
+[2024-10-30 04:46:57.925] [info]  Update for version 4.6.0 is not available (latest version: 4.6.0, downgrade is disallowed).
+[2024-10-30 04:47:03.649] [info]  Application stopped
+[2024-10-30 04:47:03.650] [info]  Application about to quit
+[2024-10-30 04:47:03.651] [info]  Server stopped
+[2024-10-30 04:47:27.768] [info]  E:\win-unpacked\resources\resources\server\server-win.exe
+[2024-10-30 04:47:27.890] [info]  Checking for update
+[2024-10-30 04:47:27.891] [info]  projectPath E:\win-unpacked
+[2024-10-30 04:47:27.892] [info]  serverPath E:\win-unpacked\resources\resources\server\server-win.exe
+[2024-10-30 04:47:28.019] [info]  trying to listen to the server
+[2024-10-30 04:47:28.785] [info]  Server started
+[2024-10-30 04:47:30.339] [info]  Update for version 4.6.0 is not available (latest version: 4.6.0, downgrade is disallowed).
+[2024-10-30 04:47:34.890] [info]  Application stopped
+[2024-10-30 04:47:34.891] [info]  Application about to quit
+[2024-10-30 04:47:34.893] [info]  Server stopped
+[2024-10-31 22:05:13.033] [info]  Skip checkForUpdates because application is not packed and dev update config is not forced
+[2024-10-31 22:06:31.029] [info]  Skip checkForUpdates because application is not packed and dev update config is not forced
+[2024-10-31 22:08:11.032] [info]  Skip checkForUpdates because application is not packed and dev update config is not forced
