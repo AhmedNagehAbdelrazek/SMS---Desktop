@@ -1,30 +1,54 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');  // Import the Sequelize instance
+const { DataTypes, Model } = require("sequelize");
+const sequelize = require("../config/database"); // Import the Sequelize instance
 
-// Define the Student model
-const Student = sequelize.define('Student', {
-    id:{
-        type: DataTypes.BIGINT,
-        primaryKey:true,
-        autoIncrement:true,
+class Student extends Model {}
+
+Student.init(
+  {
+    id: {
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+      autoIncrement: true,
     },
     name: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    phone_number: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    parent_phone_1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    parent_phone_2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    parent_phone_3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    avatar: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    group_id:{
+        type: DataTypes.INTEGER,
+        references: {
+        model: 'groups',
+        key: 'id',
+        },
+        onDelete: 'SET NULL',
+        allowNull: true,
     }
-},{
-    initialAutoIncrement:1000,
-    tableName: 'Students'
-});
-
-Student.beforeCreate(async (student, options) => {
-    const [results, metadata] = await sequelize.query(
-        "SELECT seq FROM sqlite_sequence WHERE name = 'Students'"
-    );
-
-    if (!results.length || results[0].seq < 1000) {
-        await sequelize.query("UPDATE sqlite_sequence SET seq = 1000 WHERE name = 'Students'");
-    }
-});
+  },
+  {
+    sequelize,
+    modelName: "Student",
+    tableName: "students",
+  }
+);
 
 module.exports = Student;
