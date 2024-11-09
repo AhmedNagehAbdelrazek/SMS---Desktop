@@ -13,6 +13,7 @@ Group.init(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     last_lecture_number: {
         type: DataTypes.NUMBER,
@@ -28,6 +29,10 @@ Group.init(
       validate: {
         is: /^([1-9]|1[0-2])([AP]M)$/, // Matches formats like "2PM" or "6PM"
       },
+    },
+    isDeleted: {
+      type:DataTypes.BOOLEAN,
+      defaultValue:false
     },
   },
   {

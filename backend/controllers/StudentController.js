@@ -3,7 +3,14 @@ const { Student, Group } = require("../models/index");
 
 exports.addStudent = asyncHandler(async (req, res) => {
     const body = req.body;
-    console.log({ ...body });
+    const group_id = req.body.group_id;
+    if(group_id){
+        const group = await Group.findByPk(group_id);
+        if(!group){
+            return res.status(404).json({ message: 'Group not found' });
+        }
+    }
+
     if(Array.isArray(body)){
         // create a bulk students
         const students = await Student.bulkCreate(body);

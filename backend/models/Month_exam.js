@@ -1,7 +1,7 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');  // Import the Sequelize instance
 
-class Month_Exam extends Model {}
+class Month_Exam extends Model { }
 
 Month_Exam.init(
   {
@@ -14,13 +14,20 @@ Month_Exam.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    group_id:{
+    group_id: {
       type: DataTypes.INTEGER,
       references: {
-      model: 'groups',
-      key: 'id',
+        model: 'groups',
+        key: 'id',
       },
       onDelete: 'CASCADE',
+    },
+    date: {
+      type: DataTypes.DATE,
+    },
+    isDeleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     },
   },
   {

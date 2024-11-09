@@ -7,33 +7,36 @@ const Lecture_Exam = require('./Lecture_exam');
 const Month_Exam = require('./Month_exam');
 const Student = require('./Student');
 
-Student.hasMany(Attendance);
-Attendance.belongsTo(Student);
+// Set up one-to-many relationships
+Student.hasMany(Attendance, { foreignKey: 'student_id' });
+Attendance.belongsTo(Student, { foreignKey: 'student_id' });
 
-Group.hasMany(Student,{foreignKey: 'group_id'});
-Student.belongsTo(Group,{foreignKey:"group_id"});
+Group.hasMany(Student, { foreignKey: 'group_id' });
+Student.belongsTo(Group, { foreignKey: 'group_id' });
 
-Student.hasMany(Exam);
-Exam.belongsTo(Student);
+Student.hasMany(Exam, { foreignKey: 'student_id' });
+Exam.belongsTo(Student, { foreignKey: 'student_id' });
 
-Student.hasMany(Lecture_Exam);
-Lecture_Exam.belongsTo(Student);
+Student.hasMany(Lecture_Exam, { foreignKey: 'student_id' });
+Lecture_Exam.belongsTo(Student, { foreignKey: 'student_id' });
 
-Group.hasMany(Lecture);
-Lecture.belongsTo(Group);
+Group.hasMany(Lecture, { foreignKey: 'group_id' });
+Lecture.belongsTo(Group, { foreignKey: 'group_id' });
 
-Lecture_Exam.hasMany(Lecture);
-Lecture.belongsTo(Lecture_Exam);
+Lecture.hasMany(Attendance, { foreignKey: 'lecture_id' });
+Attendance.belongsTo(Lecture, { foreignKey: 'lecture_id' });
 
-Lecture.hasMany(Attendance);
-Attendance.belongsTo(Lecture);
+Group.hasMany(Month_Exam, { foreignKey: 'group_id' });
+Month_Exam.belongsTo(Group, { foreignKey: 'group_id' });
 
-Group.hasMany(Month_Exam);
-Month_Exam.belongsTo(Group);
+Month_Exam.hasMany(Exam, { foreignKey: 'month_exam_id' });
+Exam.belongsTo(Month_Exam, { foreignKey: 'month_exam_id' });
 
-Month_Exam.hasMany(Exam);
-Exam.belongsTo(Month_Exam);
+// Optional: Define Lecture-Exam many-to-many relationship, if applicable
+Lecture.belongsToMany(Exam, { through: Lecture_Exam, foreignKey: 'lecture_id' });
+Exam.belongsToMany(Lecture, { through: Lecture_Exam, foreignKey: 'exam_id' });
 
+// Export modules for use in other parts of the application
 module.exports = {
     sequelize,
     Student,
@@ -43,4 +46,4 @@ module.exports = {
     Lecture_Exam,
     Month_Exam,
     Exam
-}
+};

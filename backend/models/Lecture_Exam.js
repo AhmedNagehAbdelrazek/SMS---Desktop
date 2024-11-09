@@ -10,10 +10,18 @@ Lecture_Exam.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    month_exam_id:{
+    lecture_id:{
       type: DataTypes.INTEGER,
       references: {
-      model: 'month_exams',
+      model: 'lectures',
+      key: 'id',
+      },
+      onDelete: 'CASCADE',
+    },
+    student_id:{
+      type: DataTypes.INTEGER,
+      references: {
+      model: 'students',
       key: 'id',
       },
       onDelete: 'CASCADE',
@@ -21,7 +29,11 @@ Lecture_Exam.init(
     grade:{
       type: DataTypes.INTEGER,
       defaultValue: 0,
-    }
+    },
+    isDeleted: {
+      type:DataTypes.BOOLEAN,
+      defaultValue:false
+    },
   },
   {
     sequelize,

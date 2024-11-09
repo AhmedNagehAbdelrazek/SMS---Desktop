@@ -29,7 +29,15 @@ Exam.init(
     grade:{
       type: DataTypes.INTEGER,
       defaultValue: 0,
-    }
+    },
+    exam_full_mark:{
+      type: DataTypes.INTEGER,
+      defaultValue: 100,
+    },
+    isDeleted: {
+      type:DataTypes.BOOLEAN,
+      defaultValue:false
+    },
   },
   {
     sequelize,

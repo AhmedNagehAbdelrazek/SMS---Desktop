@@ -1,7 +1,7 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');  // Import the Sequelize instance
 
-class Lecture extends Model {}
+class Lecture extends Model { }
 
 Lecture.init(
   {
@@ -14,14 +14,21 @@ Lecture.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    group_id:{
+    lecture_number: {
+      type: DataTypes.INTEGER,
+    },
+    group_id: {
       type: DataTypes.INTEGER,
       references: {
-      model: 'groups',
-      key: 'id',
+        model: 'groups',
+        key: 'id',
       },
       onDelete: 'CASCADE',
-  }
+    },
+    isDeleted: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
   },
   {
     sequelize,

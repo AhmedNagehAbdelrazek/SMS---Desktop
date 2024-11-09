@@ -40,6 +40,18 @@ exports.deleteGroup = asyncHandler(async (req, res) => {
     if (!group) {
         return res.status(404).json({ message: "Group not found" });
     }
-    await group.destroy();
+    await group.update({ isDeleted :true});
     res.status(200).json({ message: "Group deleted successfully" });
 });
+
+exports.getAllGroupStudents = asyncHandler(async (req, res) => {
+    const groupId = req.params.id;
+    const group = await Group.findByPk(groupId);
+    if (!group) {
+        return res.status(404).json({ message: "Group not found" });
+    }
+    const students = await group.getStudents();
+    
+    res.status(200).json(students);
+});
+
