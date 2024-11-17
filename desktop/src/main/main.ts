@@ -12,12 +12,13 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import MenuBuilder from './menu';
+import {
+  Menu,
+} from 'electron';
 import { resolveHtmlPath } from './util';
 import { exec, execFile } from 'child_process'
 // import server from '../../release/app/backend/server';
 import fs from 'fs';
-
 class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -53,6 +54,8 @@ if (isDebug) {
   require('electron-debug')();
 }
 
+Menu.setApplicationMenu(null);
+
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
@@ -81,13 +84,16 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
+    minWidth: 1024,
+    minHeight: 728,
     width: 1024,
     height: 728,
     icon: getAssetPath('icon.png'),
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: true,
-      sandbox:false,
+      contextIsolation: false,
+      sandbox:false, 
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
@@ -111,15 +117,12 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
   // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
   new AppUpdater();
@@ -181,4 +184,18 @@ app
   .catch(console.log);
 
 
+ipcMain.on('window:minimize', () => {
+  mainWindow?.minimize();
+});
+
+ipcMain.on('window:toggle-fullscreen', (func) => {
+  const isFullScreen = !mainWindow?.isFullScreen();
+  mainWindow?.setFullScreen(isFullScreen);
+  // Notify renderer about the fullscreen state change
+  mainWindow?.webContents.send('window:fullscreen-changed', isFullScreen);
+});
+
+ipcMain.on('window:close', () => {
+  mainWindow?.close();
+});
 
