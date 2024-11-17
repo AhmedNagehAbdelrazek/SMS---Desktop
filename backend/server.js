@@ -4,6 +4,7 @@ const mainRoutes = require('./Routes/index');
 const morgan = require('morgan');
 const globalErrorHandler = require('./middleware/globalErrorHandler');
 const dotenv = require('dotenv');
+const path = require('path');
 
 const app = express();
 dotenv.config({path:".env"});
@@ -11,6 +12,8 @@ dotenv.config({path:".env"});
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors({methods:"GET,HEAD,PUT,PATCH,POST,DELETE", origin:"*"}));
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api", mainRoutes);
 app.use(globalErrorHandler);

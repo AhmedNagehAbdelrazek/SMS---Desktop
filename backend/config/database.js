@@ -9,16 +9,26 @@ const fs = require("fs");
 const dbPath = path.join(process.cwd(), "database.sqlite");
 
 // Initialize Sequelize
-const sequelize = new Sequelize({
+let sequelize = new Sequelize({
   dialect: "sqlite",
   storage: dbPath, // Specify the path to the SQLite file
   logging: false, // Disable logging; optional
 });
 
+function connectDb (){
+  sequelize = new Sequelize({
+    dialect: "sqlite",
+    storage: dbPath, // Specify the path to the SQLite file
+    logging: false, // Disable logging; optional
+  });
+}
 
 // Test the connection
-(async () => {
+async function initDBConnection () {
   try {
+    if(!sequelize)
+      connectDb();
+
     await sequelize.authenticate();
     
     // await sequelize.queryInterface.addConstraint('students', {
@@ -52,7 +62,15 @@ const sequelize = new Sequelize({
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }
+}
+
+(async()=>{
+  await initDBConnection();
 })();
 
 
+
 module.exports = sequelize;
+
+module.exports.initDBConnection = initDBConnection;
+module.exports.connectDb = connectDb;

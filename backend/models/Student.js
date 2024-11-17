@@ -14,10 +14,12 @@ Student.init(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     phone_number: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     parent_phone_1: {
       type: DataTypes.STRING,
@@ -48,6 +50,10 @@ Student.init(
       type:DataTypes.BOOLEAN,
       defaultValue:false
     },
+    blocked:{
+      type:DataTypes.BOOLEAN,
+      defaultValue:false,
+    }
   },
   {
     sequelize,
