@@ -19,16 +19,13 @@ exports.setLectureExamGrade = expressAsyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Grade already exists" });
   }
   // Create or update the grade for the student in the group for the last lecture ID
-  try {
-    const examGrade = await Lecture_Exam.create({
-      student_id: studentId,
-      lecture_id: lectureId,
-      grade,
-    });
-    res.status(200).json({ message: "Grade updated", examGrade });
-  } catch (error) {
-    res.status(500).json({ error: "Error setting grade" });
-  }
+  const examGrade = await Lecture_Exam.create({
+    student_id: studentId,
+    lecture_id: lectureId,
+    grade,
+  });
+  res.status(200).json({ message: "Grade updated", examGrade });
+
 });
 
 exports.updateLectureExamGrade = expressAsyncHandler(async (req, res) => {
@@ -41,10 +38,7 @@ exports.updateLectureExamGrade = expressAsyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Grade not found" });
   }
   // Create or update the grade for the student in the group for the last lecture ID
-  try {
-    const examGrade = await Lecture_Exam.update({ grade }, { where: { id: examId } });
-    res.status(200).json({ message: "Grade updated", examGrade });
-  } catch (error) {
-    res.status(500).json({ error: "Error setting grade" });
-  }
+  const examGrade = await Lecture_Exam.update({ grade }, { where: { id: examId } });
+  res.status(200).json({ message: "Grade updated", examGrade });
+
 });

@@ -8,6 +8,6 @@ exports.getAllLectures = expressAsyncHandler(async (req, res) => {
 
 exports.getAllLecturesForGroup = expressAsyncHandler(async (req, res) => {
     const { groupId } = req.params;
-    const lectures = await Lecture.findAll({where: { group_id: groupId }  });
+    const lectures = await Lecture.findAll({ where: { group_id: groupId } });
     res.status(200).json(lectures);
 });

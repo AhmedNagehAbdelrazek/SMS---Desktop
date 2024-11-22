@@ -124,7 +124,8 @@ exports.deleteStudent = asyncHandler(async (req, res) => {
     const student = await Student.findByPk(id);
 
     if (!student) {
-        return res.status(404).json({ message: 'Student not found' });
+        throw {message:'Student not found'}
+        // return res.status(404).json({ message: 'Student not found' });
     }
 
     await student.destroy();
@@ -167,7 +168,8 @@ exports.searchStudents = asyncHandler(async (req, res) => {
     });
 
     if (students.length === 0) {
-        return res.status(404).json({ message: "No students found." });
+        // return res.status(404).json({ message: "No students found." });
+        throw {message:"No students found."};
     }
 
     return res.status(200).json(students);

@@ -1,0 +1,5 @@
+{"body":{"asda":""},"date":"2024-11-21T21:33:14.537Z","level":"info","message":"[Request] DELETE /api/student/2222"}
+{"date":"2024-11-21T21:33:14.669Z","level":"info","message":"[Response] DELETE /api/student/2222 - 500 - 122ms"}
+{"body":{"asda":""},"date":"2024-11-21T21:33:52.254Z","level":"info","message":"[Request] DELETE /api/student/2222"}
+{"level":"error","message":"[Error] DELETE /api/student/2222 - Student not found"}
+{"date":"2024-11-21T21:33:52.297Z","level":"info","message":"[Response] DELETE /api/student/2222 - 404 - 39ms"}
