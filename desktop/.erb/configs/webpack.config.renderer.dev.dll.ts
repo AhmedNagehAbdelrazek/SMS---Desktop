@@ -25,10 +25,7 @@ const configuration: webpack.Configuration = {
 
   externals: ['fsevents', 'crypto-browserify'],
 
-  /**
-   * Use `module` from `webpack.config.renderer.dev.js`
-   */
-  module: require('./webpack.config.renderer.dev').default.module,
+  module: require('./webpack.config.renderer.dev.ts').default.module,
 
   entry: {
     renderer: Object.keys(dependencies || {}),
