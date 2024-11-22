@@ -6,6 +6,11 @@ const globalErrorHandler = require('./middleware/globalErrorHandler');
 const dotenv = require('dotenv');
 const path = require('path');
 const logger = require('./config/logger');
+const upload = require('./config/uploadAvatars');
+
+global.PORT = 65000;
+
+const port = global.PORT;
 
 const app = express();
 dotenv.config({path:".env"});
@@ -14,10 +19,11 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors({methods:"GET,HEAD,PUT,PATCH,POST,DELETE", origin:"*"}));
 
-app.use((req, res, next) => {
-  logger.info({date:new Date().toISOString(),message:`[Request] ${req.method} ${req.url}`,body:req.body});
+app.use([upload.any(),(req, res, next) => {
+  logger.info({_type:"[Request]",date:new Date().toISOString(),message:`${req.method} ${req.url}`,body:req.body});
+  
   next();
-});
+}]);
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
@@ -26,7 +32,7 @@ app.use((req, res, next) => {
   const start = Date.now();
   res.on('finish', () => {
     const duration = Date.now() - start;
-    logger.info({date:new Date().toISOString(),message:`[Response] ${req.method} ${req.url} - ${res.statusCode} - ${duration}ms`});
+    logger.info({_type:"[Response]",date:new Date().toISOString(),message:`${req.method} ${req.url} - ${res.statusCode} - ${duration}ms`});
   });
   res.on('error', () => {
     logger.error(`[Error] ${req.method} ${req.url} - ${err.message}`);
@@ -37,23 +43,25 @@ app.use((req, res, next) => {
 app.use("/api", mainRoutes);
 
 app.use((err, req, res, next) => {
-  logger.error(`[Error] ${req.method} ${req.url} - ${err.message}`);
-  next();
+  logger.error({_type:"[Error]",message:`${req.method} ${req.url}}`,error:err});
+  globalErrorHandler(err, req, res, next);
 });
 
 app.use(globalErrorHandler);
 
 
-app.listen(65000, () => {
-  console.log('Server is running on port 65000');
+app.listen(port || 3000, () => {
+  console.log(`Server is running on port localhost:${port}`);
 });
 
 process.on('uncaughtException', (err) => {
   console.error('Uncaught Exception:', err);
+  logger.error({_type:"[Error-uncaughtException]",error:JSON.stringify(err)});
   // Decide whether to exit the process or recover based on the error
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection:', reason);
+  logger.error({_type:"[Error-unhandledRejection]",message:reason});
   // Log the error and handle it gracefully
 });

@@ -29,13 +29,13 @@ exports.addStudent = [
             if (group_id) {
                 const group = await Group.findByPk(group_id);
                 if (!group) {
-                    return res.status(404).json({ message: "Group not found" });
+                    throw { message: "Group not found" };
                 }
             }
 
             // Handle avatar file if uploaded
-            const baseUrl = `${req.protocol}://${req.get("host")}`; // Get the base URL dynamically
-            const avatarPath = req.file ? `${baseUrl}/uploads/avatars/${req.file.filename}` : null;
+            // const baseUrl = `${req.protocol}://${req.get("host")}`; // Get the base URL dynamically
+            const avatarPath = req.file ? `/uploads/avatars/${req.file.filename}` : null;
 
             if (Array.isArray(body)) {
                 // Bulk create students
@@ -58,7 +58,7 @@ exports.addStudent = [
             return res.status(200).json(newStudent);
         } catch (error) {
             // console.error(req.file.path);
-            await deleteImage(req.file.path);
+            await deleteImage(req?.file?.path);
             throw error;
         }
     }),
@@ -74,7 +74,7 @@ exports.getStudentById = asyncHandler(async (req, res) => {
     const student = await Student.findByPk(id);
 
     if (!student) {
-        return res.status(404).json({ message: 'Student not found' });
+        throw { message: 'Student not found' };
     }
 
     return res.status(200).json(student);
@@ -89,7 +89,7 @@ exports.updateStudent = [
             const student = await Student.findByPk(id);
     
             if (!student) {
-                return res.status(404).json({ message: 'Student not found' });
+                throw { message: 'Student not found' };
             }
             const avatar = req.file;
             if (avatar && student.avatar) {
@@ -100,8 +100,8 @@ exports.updateStudent = [
                 await deleteImage(avatarPath);
             }
     
-            const baseUrl = `${req.protocol}://${req.get("host")}`; // Get the base URL dynamically
-            const avatarPath = req.file ? `${baseUrl}/uploads/avatars/${req.file.filename}` : null;
+            // const baseUrl = `${req.protocol}://${req.get("host")}`; // Get the base URL dynamically
+            const avatarPath = req.file ? `/uploads/avatars/${req.file.filename}` : null;
     
             body.avatar = avatarPath;
     
@@ -112,7 +112,7 @@ exports.updateStudent = [
     
             return res.status(200).json(updatedStudent);
         }catch(error){
-            await deleteImage(req.file.path);
+            await deleteImage(req?.file?.path);
             throw error;
         }
     })
@@ -139,10 +139,10 @@ exports.chnageGroup = asyncHandler(async (req, res) => {
     const student = await Student.findByPk(student_id);
     const group = await Group.findByPk(group_id);
     if (!student) {
-        return res.status(404).json({ message: 'Student not found' });
+        throw { message: 'Student not found' };
     }
     if (!group) {
-        return res.status(404).json({ message: 'Group not found' });
+        throw { message: 'Group not found' };
     }
     const updatedStudent = await student.update({ group_id });
     return res.status(200).json(updatedStudent);
@@ -154,7 +154,7 @@ exports.searchStudents = asyncHandler(async (req, res) => {
     
     console.log(typeof search);
     if (!search) {
-        return res.status(400).json({ message: "Search term is required." });
+        throw { message: "Search term is required." };
     }
 
     const students = await Student.findAll({

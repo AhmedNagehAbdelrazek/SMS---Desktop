@@ -17,25 +17,30 @@ Student.init(
       unique: true,
     },
     phone_number: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: false,
       unique: true,
     },
     parent_phone_1: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: true,
     },
     parent_phone_2: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: true,
     },
     parent_phone_3: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: true,
     },
     avatar: {
       type: DataTypes.STRING,
       allowNull: true,
+      get(){
+        const avatar = this.getDataValue ? this.getDataValue('avatar') : this.avatar;
+        let port = global.PORT || 3000;
+        return avatar ? `http://localhost:${port}${avatar}` : null;
+      }
     },
     group_id:{
         type: DataTypes.INTEGER,
