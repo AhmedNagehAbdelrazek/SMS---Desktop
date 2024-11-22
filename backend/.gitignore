@@ -1,5 +1,5 @@
 node_modules
 uploads
 
-./error.log
-./database.sqlite
+error.log
+database.sqlite
