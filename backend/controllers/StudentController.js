@@ -29,7 +29,8 @@ exports.addStudent = [
             if (group_id) {
                 const group = await Group.findByPk(group_id);
                 if (!group) {
-                    throw { message: "Group not found" };
+                    return res.status(404).json({ message: "Group not found" });
+                    // throw { message: "Group not found" };
                 }
             }
 
@@ -74,7 +75,8 @@ exports.getStudentById = asyncHandler(async (req, res) => {
     const student = await Student.findByPk(id);
 
     if (!student) {
-        throw { message: 'Student not found' };
+        // throw { message: 'Student not found' };
+        return res.status(404).json({ message: 'Student not found' });
     }
 
     return res.status(200).json(student);
@@ -124,8 +126,8 @@ exports.deleteStudent = asyncHandler(async (req, res) => {
     const student = await Student.findByPk(id);
 
     if (!student) {
-        throw {message:'Student not found'}
-        // return res.status(404).json({ message: 'Student not found' });
+        // throw {message:'Student not found'}
+        return res.status(404).json({ message: 'Student not found' });
     }
 
     await student.destroy();
@@ -139,17 +141,18 @@ exports.chnageGroup = asyncHandler(async (req, res) => {
     const student = await Student.findByPk(student_id);
     const group = await Group.findByPk(group_id);
     if (!student) {
-        throw { message: 'Student not found' };
+        return res.status(404).json({ message: 'Student not found' });
     }
     if (!group) {
-        throw { message: 'Group not found' };
+        // throw { message: 'Group not found' };
+        return res.status(404).json({ message: 'Group not found' });
     }
     const updatedStudent = await student.update({ group_id });
     return res.status(200).json(updatedStudent);
 });
 
 exports.searchStudents = asyncHandler(async (req, res) => {
-    const { search } = req.body;
+    const { search } = req.query;
     console.log("search", search);
     
     console.log(typeof search);
@@ -168,8 +171,7 @@ exports.searchStudents = asyncHandler(async (req, res) => {
     });
 
     if (students.length === 0) {
-        // return res.status(404).json({ message: "No students found." });
-        throw {message:"No students found."};
+        return res.status(404).json({ message: "No students found." });
     }
 
     return res.status(200).json(students);

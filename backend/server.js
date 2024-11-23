@@ -39,8 +39,6 @@ app.use((req, res, next) => {
       };
 
       logger.info(logData);
-      console.log(logData);
-
       next();
 });
 
