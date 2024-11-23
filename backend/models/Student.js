@@ -10,6 +10,10 @@ Student.init(
       type: DataTypes.BIGINT,
       primaryKey: true,
       autoIncrement: true,
+      get(){
+        const id = this.getDataValue ? this.getDataValue('id') : this.id;
+        return id ? id.toString().padStart(8, '0') : null;
+      }
     },
     name: {
       type: DataTypes.STRING,
