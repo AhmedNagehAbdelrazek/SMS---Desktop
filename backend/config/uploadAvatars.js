@@ -18,9 +18,20 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     // Generate a random unique name
-    const randomName = crypto.randomBytes(16).toString("hex"); // 32-character random string
-    const fileExtension = path.extname(file.originalname); // Preserve the file extension
-    const newFileName = `${randomName}${fileExtension}`;
+    function CreateFileRandomName(){
+      const randomName = crypto.randomBytes(16).toString("hex"); // 32-character random string
+      const fileExtension = path.extname(file.originalname); // Preserve the file extension
+      return `${randomName}${fileExtension}`;
+    }
+    let newFileName = CreateFileRandomName();
+
+    while(true){
+      if (!fs.existsSync(path.join(uploadDir,newFileName))) {
+        break;
+      }
+      newFileName = CreateFileRandomName();
+    }
+    
     cb(null, newFileName);
   },
 });

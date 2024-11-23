@@ -18,12 +18,24 @@ Student.init(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     phone_number: {
       type: DataTypes.NUMBER,
       allowNull: false,
-      unique: true,
+      unique:{
+        msg: "This phone number is already in use."
+      },
+      validate:{
+        validatePhoneNumber(value){
+          if(!value.startsWith("01")){
+            throw new Error("phone number has to start with 01");
+          }
+          if(value.length != 11){
+            throw new Error("phone number has to be 11 number");
+          }
+        },
+
+      }
     },
     parent_phone_1: {
       type: DataTypes.NUMBER,
@@ -70,6 +82,15 @@ Student.init(
     tableName: "students",
   }
 );
+
+Student.beforeCreate(async (student, options) => {
+  try {
+    await student.validate(); // Trigger validation before creation
+  } catch (error) {
+    throw error; // Throw custom validation errors
+  }
+});
+
 
 Student.beforeBulkCreate(async (students, options) => {
   const groupIds = students

@@ -20,12 +20,12 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "student",
+									"value": "student1653",
 									"type": "text"
 								},
 								{
 									"key": "phone_number",
-									"value": "1231231231",
+									"value": "01112151415",
 									"type": "text"
 								},
 								{
@@ -36,17 +36,17 @@
 								{
 									"key": "avatar",
 									"type": "file",
-									"src": "/C:/Users/Ahmed Medo/Downloads/image.png"
+									"src": "/C:/Users/Ahmed Medo/Downloads/WhatsApp Image 2024-11-12 at 3.23.45 PM.jpeg"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/student",
+							"raw": "http://localhost:65000/api/student",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student"
@@ -159,12 +159,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/student/group/1",
+							"raw": "http://localhost:65000/api/student/group/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student",
@@ -260,12 +260,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/student",
+							"raw": "http://localhost:65000/api/student",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student"
@@ -348,15 +348,30 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/student",
+							"raw": "http://localhost:65000/api/student?page=1&limit=2",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								},
+								{
+									"key": "all",
+									"value": "true",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -436,16 +451,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/student/1",
+							"raw": "http://localhost:65000/api/student/00000001",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student",
-								"1"
+								"00000001"
 							]
 						}
 					},
@@ -530,7 +545,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"search\":122\r\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -538,17 +553,23 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/student/search/students",
+							"raw": "http://localhost:65000/api/student/search/students?search=123",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student",
 								"search",
 								"students"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "123"
+								}
 							]
 						}
 					},
@@ -639,21 +660,21 @@
 								{
 									"key": "avatar",
 									"type": "file",
-									"src": "/C:/Users/Ahmed Medo/Downloads/WhatsApp Image 2024-11-13 at 2.25.59 PM.jpeg"
+									"src": "/C:/Users/Ahmed Medo/Downloads/Screenshot 2024-11-02 at 16-22-18 (2) WhatsApp.png"
 								}
 							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/student/1",
+							"raw": "http://localhost:65000/api/student/1001",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student",
-								"1"
+								"1001"
 							]
 						}
 					},
@@ -813,17 +834,26 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"asda\":\"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:3000/api/student/2",
+							"raw": "http://localhost:65000/api/student/2222",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student",
-								"2"
+								"2222"
 							]
 						}
 					},
@@ -909,12 +939,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/group",
+							"raw": "http://localhost:65000/api/group",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"group"
@@ -1179,12 +1209,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/group/week/table",
+							"raw": "http://localhost:65000/api/group/week/table",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"group",
@@ -1283,12 +1313,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/group/students/1",
+							"raw": "http://localhost:65000/api/group/students/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"group",
@@ -1387,12 +1417,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/group",
+							"raw": "http://localhost:65000/api/group",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"group"
@@ -1484,12 +1514,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/group/1",
+							"raw": "http://localhost:65000/api/group/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"group",
@@ -1574,12 +1604,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/group/1",
+							"raw": "http://localhost:65000/api/group/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"group",
@@ -1669,12 +1699,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/backup/",
+							"raw": "http://localhost:65000/api/backup/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"backup",
@@ -1699,12 +1729,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/backup/restore",
+							"raw": "http://localhost:65000/api/backup/restore",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"backup",
@@ -1734,12 +1764,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/attendance/attend",
+							"raw": "http://localhost:65000/api/attendance/attend",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"attendance",
@@ -1904,12 +1934,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/attendance/1",
+							"raw": "http://localhost:65000/api/attendance/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"attendance",
@@ -2071,12 +2101,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/attendance/1",
+							"raw": "http://localhost:65000/api/attendance/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"attendance",
@@ -2238,12 +2268,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/attendance/1",
+							"raw": "http://localhost:65000/api/attendance/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"attendance",
@@ -2340,12 +2370,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/attendance/",
+							"raw": "http://localhost:65000/api/attendance/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"attendance",
@@ -2430,12 +2460,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/attendance/group/1",
+							"raw": "http://localhost:65000/api/attendance/group/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"attendance",
@@ -2513,12 +2543,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/attendance/lecture/1",
+							"raw": "http://localhost:65000/api/attendance/lecture/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"attendance",
@@ -2610,12 +2640,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/monthexam/",
+							"raw": "http://localhost:65000/api/monthexam/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"monthexam",
@@ -2712,12 +2742,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/monthexam/",
+							"raw": "http://localhost:65000/api/monthexam/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"monthexam",
@@ -2814,12 +2844,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/monthexam/report/1",
+							"raw": "http://localhost:65000/api/monthexam/report/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"monthexam",
@@ -2983,12 +3013,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/monthexam/grade",
+							"raw": "http://localhost:65000/api/monthexam/grade",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"monthexam",
@@ -3078,12 +3108,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/lecture/",
+							"raw": "http://localhost:65000/api/lecture/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"lecture",
@@ -3159,12 +3189,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/lecture/1",
+							"raw": "http://localhost:65000/api/lecture/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"lecture",
@@ -3249,12 +3279,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/lecture/grade",
+							"raw": "http://localhost:65000/api/lecture/grade",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"lecture",
@@ -3348,12 +3378,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/lecture/grade",
+							"raw": "http://localhost:65000/api/lecture/grade",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"lecture",
