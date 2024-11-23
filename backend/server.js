@@ -1,43 +1,84 @@
 const express = require('express');
-const sequelize = require('./config/database');  // Sequelize instance
-const Student = require('./models/Student');  // Import the Student model
 const cors = require('cors');
+const mainRoutes = require('./Routes/index');
+const morgan = require('morgan');
+const globalErrorHandler = require('./middleware/globalErrorHandler');
+const dotenv = require('dotenv');
+const path = require('path');
+const logger = require('./config/logger');
+const multer = require('multer');
 
+global.PORT = 65000;
+
+const port = global.PORT;
 
 const app = express();
-app.use(express.json());
+dotenv.config({path:".env"});
+
+app.use(morgan("dev"));
 app.use(cors({methods:"GET,HEAD,PUT,PATCH,POST,DELETE", origin:"*"}));
 
-// Sync the database, creating the SQLite file and tables if they don’t exist
-sequelize.sync({ alter: true })  // `alter: true` ensures tables match models
-    .then(async () => {
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-        const dummy = await Student.create({ name: 'Dummy' });
+// Middleware to handle multipart/form-data and free memory
+app.use((req, res, next) => {
+      // Extract data and log
+      const logData = {
+          _type: '[Request]',
+          date: new Date().toISOString(),
+          message: `${req.method} ${req.url}`,
+          body: req.body || {}, // Form fields
+          files: (req.files || []).map(file => ({
+              fieldname: file.fieldname,
+              originalname: file.originalname,
+              mimetype: file.mimetype,
+              size: file.size,
 
-        // Delete the dummy record
-        await Student.destroy({ where: { id: dummy.id } });
+          })),
+      };
 
-        const [results, metadata] = await sequelize.query("UPDATE sqlite_sequence SET seq = 1000 WHERE name = 'Students'");
-        console.log(results);
-
-        console.log('Database & tables created!');
-    })
-    .catch((error) => console.error('Error syncing database:', error));
-
-app.get('/', async (req, res) => {
-    const students = await Student.findAll({attributes:["name","id"]});
-    res.status(200).json(students);
-})
-app.post('/', async (req, res) => {
-    const newStudent = await Student.create({...req.body});
-    res.status(200).json(newStudent);
+      logger.info(logData);
+      next();
 });
 
-app.delete('/', async (req, res) => {
-  await Student.truncate();
-  res.status(200);
-});
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    logger.info({_type:"[Response]",date:new Date().toISOString(),message:`${req.method} ${req.url} - ${res.statusCode} - ${duration}ms`});
+  });
+  res.on('error', () => {
+    logger.error(`[Error] ${req.method} ${req.url} - ${err.message}`);
+  });
+  next();
 });
 
+app.use("/api", mainRoutes);
+
+app.use((err, req, res, next) => {
+  logger.error({_type:"[Error]",message:`${req.method} ${req.url}}`,error:err});
+  globalErrorHandler(err, req, res, next);
+});
+
+app.use(globalErrorHandler);
+
+
+app.listen(port || 3000, () => {
+  console.log(`Server is running on port localhost:${port}`);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  logger.error({_type:"[Error-uncaughtException]",error:JSON.stringify(err)});
+  // Decide whether to exit the process or recover based on the error
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection:', reason);
+  logger.error({_type:"[Error-unhandledRejection]",message:reason});
+  // Log the error and handle it gracefully
+});
