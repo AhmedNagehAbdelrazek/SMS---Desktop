@@ -6,7 +6,7 @@ const globalErrorHandler = require('./middleware/globalErrorHandler');
 const dotenv = require('dotenv');
 const path = require('path');
 const logger = require('./config/logger');
-const upload = require('./config/uploadAvatars');
+const multer = require('multer');
 
 global.PORT = 65000;
 
@@ -16,16 +16,35 @@ const app = express();
 dotenv.config({path:".env"});
 
 app.use(morgan("dev"));
-app.use(express.json());
 app.use(cors({methods:"GET,HEAD,PUT,PATCH,POST,DELETE", origin:"*"}));
 
-app.use([upload.any(),(req, res, next) => {
-  logger.info({_type:"[Request]",date:new Date().toISOString(),message:`${req.method} ${req.url}`,body:req.body});
-  
-  next();
-}]);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// Middleware to handle multipart/form-data and free memory
+app.use((req, res, next) => {
+      // Extract data and log
+      const logData = {
+          _type: '[Request]',
+          date: new Date().toISOString(),
+          message: `${req.method} ${req.url}`,
+          body: req.body || {}, // Form fields
+          files: (req.files || []).map(file => ({
+              fieldname: file.fieldname,
+              originalname: file.originalname,
+              mimetype: file.mimetype,
+              size: file.size,
+
+          })),
+      };
+
+      logger.info(logData);
+      console.log(logData);
+
+      next();
+});
+
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 
 app.use((req, res, next) => {

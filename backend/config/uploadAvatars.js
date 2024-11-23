@@ -4,15 +4,17 @@ const path = require("path");
 const fs = require("fs");
 
 
+// Define a writable directory outside the snapshot
+const uploadDir = path.join(process.cwd(), "uploads/avatars"); // `process.cwd()` is the current working directory
+
+// Ensure the upload directory exists
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
 // Configure Multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = path.join(__dirname, "../uploads/avatars");
-
-    if(!fs.existsSync(uploadPath)){
-      fs.mkdirSync(uploadPath,{ recursive: true });
-    }
-    cb(null, uploadPath);
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
     // Generate a random unique name
