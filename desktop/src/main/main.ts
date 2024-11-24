@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import {
   Menu,
+  nativeTheme
 } from 'electron';
 import { resolveHtmlPath } from './util';
 import { exec, execFile } from 'child_process'
@@ -35,6 +36,13 @@ log.transports.file.resolvePath = () => path.join(logDir, 'app.log');
 
 
 let mainWindow: BrowserWindow | null = null;
+
+nativeTheme.on('updated', () => {
+  const isDarkMode = nativeTheme.shouldUseDarkColors;
+  mainWindow?.webContents.send('theme-changed', isDarkMode ? 'dark' : 'light');
+});
+
+
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -88,6 +96,7 @@ const createWindow = async () => {
     minHeight: 728,
     width: 1024,
     height: 728,
+    transparent: true, 
     icon: getAssetPath('icon.png'),
     frame: false,
     webPreferences: {

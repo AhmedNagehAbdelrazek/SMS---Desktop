@@ -31,79 +31,30 @@ export default function CustomHeader() {
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        direction: 'rtl',
-        padding: '0.5rem',
-        backgroundColor: '#ECECEC',
-        color: '#333',
-        WebkitAppRegion: 'drag',
-        height: '40px',
-      }}
-    >
+    <div className="flex items-center shadow-sm justify-between fixed rounded-lg left-2 z-50 right-2 top-2 rtl p-4 bg-macos-light-gray text-macos-text h-10" style={{ WebkitAppRegion: 'drag' }}>
       {/* Left Side: Mac-style buttons */}
-      <div
-        style={{
-          display: 'flex',
-          gap: '8px',
-          paddingLeft: '10px',
-          WebkitAppRegion: 'no-drag', // Make buttons interactive
-        }}
-      >
+      <div className="flex gap-2 pl-2" style={{ WebkitAppRegion: 'no-drag' }}>
         <div
-          style={{
-            width: '16px',
-            aspectRatio: '1/1',
-            borderRadius: '50%',
-            backgroundColor: '#FF605C',
-            cursor: 'pointer',
-          }}
+          className="w-4 h-4 rounded-full bg-red-500 cursor-pointer"
           onClick={handleClose}
         />
         <div
-          style={{
-            width: '16px',
-            aspectRatio: '1/1',
-            borderRadius: '50%',
-            backgroundColor: '#FFBD44',
-            cursor: 'pointer',
-          }}
+          className="w-4 h-4 rounded-full bg-yellow-500 cursor-pointer"
           onClick={handleMinimize}
         />
         <div
-          style={{
-            width: '16px',
-            aspectRatio: '1/1',
-            borderRadius: '50%',
-            backgroundColor: '#00CA4E',
-            cursor: 'pointer',
-          }}
+          className="w-4 h-4 rounded-full bg-green-500 cursor-pointer"
           onClick={handleToggleFullscreen}
         />
       </div>
 
       {/* Center: Title */}
-      <div
-        style={{
-          flex: 1,
-          textAlign: 'center',
-          fontSize: '14px',
-          fontWeight: 'bold',
-          color: '#333',
-        }}
-      >
+      <div className="flex-1 text-center text-sm font-bold text-macos-text">
         نظام إدارة الطلاب
       </div>
 
       {/* Right Side: Empty (or additional controls, if needed) */}
-      <div
-        style={{
-          width: '60px',
-        }}
-      ></div>
+      <div className="w-15"></div>
     </div>
   );
-};
+}

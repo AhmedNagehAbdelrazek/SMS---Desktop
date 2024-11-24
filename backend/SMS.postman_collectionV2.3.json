@@ -16,21 +16,37 @@
 						"method": "POST",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"student awda\",\r\n    \"phone_number\": \"123132\",\r\n    \"parent_phone_1\": \"777777\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "student1653",
+									"type": "text"
+								},
+								{
+									"key": "phone_number",
+									"value": "01112151415",
+									"type": "text"
+								},
+								{
+									"key": "parent_phone_1",
+									"value": "222222",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/Ahmed Medo/Downloads/WhatsApp Image 2024-11-12 at 3.23.45 PM.jpeg"
 								}
-							}
+							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/student",
+							"raw": "http://localhost:65000/api/student",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student"
@@ -44,8 +60,29 @@
 								"method": "POST",
 								"header": [],
 								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"student 1\",\r\n    \"phone_number\": \"123132\",\r\n    \"parent_phone_1\": \"777777\"\r\n}",
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "student1",
+											"type": "text"
+										},
+										{
+											"key": "phone_number",
+											"value": "11111133",
+											"type": "text"
+										},
+										{
+											"key": "parent_phone_1",
+											"value": "23123123",
+											"type": "text"
+										},
+										{
+											"key": "avatar",
+											"type": "file",
+											"src": "/C:/Users/Ahmed Medo/Downloads/WhatsApp Image 2024-11-12 at 3.23.45 PM.jpeg"
+										}
+									],
 									"options": {
 										"raw": {
 											"language": "json"
@@ -83,15 +120,15 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "155"
+									"value": "279"
 								},
 								{
 									"key": "ETag",
-									"value": "W/\"9b-etP/Y5gqoo04b5z4izja7enySWg\""
+									"value": "W/\"117-xt9ghwFK7pZeyoN2xonO3FtdmHo\""
 								},
 								{
 									"key": "Date",
-									"value": "Fri, 01 Nov 2024 15:43:39 GMT"
+									"value": "Sun, 17 Nov 2024 16:46:13 GMT"
 								},
 								{
 									"key": "Connection",
@@ -103,7 +140,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"id\": 1,\n    \"name\": \"student 1\",\n    \"phone_number\": \"123132\",\n    \"parent_phone_1\": \"777777\",\n    \"updatedAt\": \"2024-11-01T15:43:39.792Z\",\n    \"createdAt\": \"2024-11-01T15:43:39.792Z\"\n}"
+							"body": "{\n    \"isDeleted\": false,\n    \"blocked\": false,\n    \"id\": 2,\n    \"name\": \"student1\",\n    \"phone_number\": \"11111133\",\n    \"parent_phone_1\": \"23123123\",\n    \"avatar\": \"http://localhost:3000/uploads/avatars/2b43614dc99c010834216048f8c4cd57.jpeg\",\n    \"updatedAt\": \"2024-11-17T16:46:13.383Z\",\n    \"createdAt\": \"2024-11-17T16:46:13.383Z\"\n}"
 						}
 					]
 				},
@@ -114,7 +151,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"student_id\":3\r\n}",
+							"raw": "{\r\n    \"student_id\":5\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -122,12 +159,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/student/group/1",
+							"raw": "http://localhost:65000/api/student/group/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student",
@@ -215,7 +252,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "[\r\n    {\r\n        \"name\":\"student 1\",\r\n        \"phone_number\":\"123132\",\r\n        \"parent_phone_1\":\"777777\",\r\n        \"group_id\":1\r\n    },\r\n    {\r\n        \"name\":\"student 2\",\r\n        \"phone_number\":\"123132\",\r\n        \"group_id\":1\r\n    },\r\n    {\r\n        \"name\":\"student 3\",\r\n        \"phone_number\":\"123132\",\r\n        \"parent_phone_1\":\"75272\",\r\n        \"parent_phone_2\":\"782782782\",\r\n        \"group_id\":1\r\n    }\r\n]",
+							"raw": "[\r\n    {\r\n        \"name\":\"student 1\",\r\n        \"phone_number\":\"1231382\",\r\n        \"parent_phone_1\":\"777777\"\r\n    },\r\n    {\r\n        \"name\":\"student 2\",\r\n        \"phone_number\":\"12315632\"\r\n    },\r\n    {\r\n        \"name\":\"student 3\",\r\n        \"phone_number\":\"123145632\",\r\n        \"parent_phone_1\":\"75272\",\r\n        \"parent_phone_2\":\"782782782\"\r\n    }\r\n]",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -223,12 +260,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/student",
+							"raw": "http://localhost:65000/api/student",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student"
@@ -311,15 +348,30 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/student",
+							"raw": "http://localhost:65000/api/student?page=1&limit=2",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "2"
+								},
+								{
+									"key": "all",
+									"value": "true",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -399,16 +451,125 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/student/5",
+							"raw": "http://localhost:65000/api/student/00000001",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student",
-								"5"
+								"00000001"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"student 1\",\r\n    \"phone_number\": \"123132\",\r\n    \"parent_phone_1\": \"777777\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/student/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"student",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "229"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"e5-BSLPcA1bi7qOfFzvA5ugcgVLO5g\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 01 Nov 2024 15:45:37 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"name\": \"student 1\",\n    \"phone_number\": \"123132\",\n    \"parent_phone_1\": \"777777\",\n    \"parent_phone_2\": null,\n    \"parent_phone_3\": null,\n    \"avatar\": null,\n    \"group_id\": null,\n    \"createdAt\": \"2024-11-01T15:43:39.792Z\",\n    \"updatedAt\": \"2024-11-01T15:43:39.792Z\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Search Students",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:65000/api/student/search/students?search=123",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "65000",
+							"path": [
+								"api",
+								"student",
+								"search",
+								"students"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "123"
+								}
 							]
 						}
 					},
@@ -489,42 +650,128 @@
 						"method": "PATCH",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"lucky one\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "rrrr",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/Ahmed Medo/Downloads/Screenshot 2024-11-02 at 16-22-18 (2) WhatsApp.png"
 								}
-							}
+							]
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/student/1",
+							"raw": "http://localhost:65000/api/student/1001",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student",
-								"1"
+								"1001"
 							]
 						}
 					},
 					"response": [
 						{
-							"name": "Lucky Success",
+							"name": "Failed",
 							"originalRequest": {
 								"method": "PATCH",
 								"header": [],
 								"body": {
-									"mode": "raw",
-									"raw": "{\r\n    \"name\": \"lucky one\"\r\n}",
-									"options": {
-										"raw": {
-											"language": "json"
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "student",
+											"type": "text"
+										},
+										{
+											"key": "avatar",
+											"type": "file",
+											"src": "/C:/Users/Ahmed Medo/Downloads/WhatsApp Image 2024-11-13 at 2.25.59 PM.jpeg"
 										}
-									}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/student/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"student",
+										"1"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "2287"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"8ef-avawG/bu7aomxd7MvPnGhdyc7CE\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 17 Nov 2024 19:33:20 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"error\",\n    \"error\": {\n        \"name\": \"SequelizeUniqueConstraintError\",\n        \"errors\": [\n            {\n                \"message\": \"name must be unique\",\n                \"type\": \"unique violation\",\n                \"path\": \"name\",\n                \"value\": \"student\",\n                \"origin\": \"DB\",\n                \"instance\": {\n                    \"id\": 1,\n                    \"name\": \"student\",\n                    \"phone_number\": \"11111133\",\n                    \"parent_phone_1\": \"23123123\",\n                    \"parent_phone_2\": null,\n                    \"parent_phone_3\": null,\n                    \"avatar\": \"http://localhost:3000/uploads/avatars/71e3f427f6a5d03250547d1c40c0987a.jpeg\",\n                    \"group_id\": null,\n                    \"isDeleted\": false,\n                    \"blocked\": false,\n                    \"createdAt\": \"2024-11-17T18:21:47.822Z\",\n                    \"updatedAt\": \"2024-11-17T19:33:20.967Z\"\n                },\n                \"validatorKey\": \"not_unique\",\n                \"validatorName\": null,\n                \"validatorArgs\": []\n            }\n        ],\n        \"parent\": {\n            \"errno\": 19,\n            \"code\": \"SQLITE_CONSTRAINT\",\n            \"__augmented\": true,\n            \"sql\": \"UPDATE `students` SET `name`=$1,`avatar`=$2,`updatedAt`=$3 WHERE `id` = $4\"\n        },\n        \"original\": {\n            \"errno\": 19,\n            \"code\": \"SQLITE_CONSTRAINT\",\n            \"__augmented\": true,\n            \"sql\": \"UPDATE `students` SET `name`=$1,`avatar`=$2,`updatedAt`=$3 WHERE `id` = $4\"\n        },\n        \"fields\": [\n            \"name\"\n        ],\n        \"sql\": \"UPDATE `students` SET `name`=$1,`avatar`=$2,`updatedAt`=$3 WHERE `id` = $4\",\n        \"statusCode\": 500,\n        \"status\": \"error\"\n    },\n    \"message\": \"Validation error\",\n    \"stack\": \"Error\\n    at Database.<anonymous> (C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\node_modules\\\\sequelize\\\\lib\\\\dialects\\\\sqlite\\\\query.js:185:27)\\n    at C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\node_modules\\\\sequelize\\\\lib\\\\dialects\\\\sqlite\\\\query.js:183:50\\n    at new Promise (<anonymous>)\\n    at Query.run (C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\node_modules\\\\sequelize\\\\lib\\\\dialects\\\\sqlite\\\\query.js:183:12)\\n    at C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\node_modules\\\\sequelize\\\\lib\\\\sequelize.js:315:28\\n    at async SQLiteQueryInterface.update (C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\node_modules\\\\sequelize\\\\lib\\\\dialects\\\\abstract\\\\query-interface.js:355:12)\\n    at async Student.save (C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\node_modules\\\\sequelize\\\\lib\\\\model.js:2490:35)\\n    at async Student.update (C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\node_modules\\\\sequelize\\\\lib\\\\model.js:2598:12)\\n    at async C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\controllers\\\\StudentController.js:108:36\"\n}"
+						},
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "PATCH",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "name",
+											"value": "rrrr",
+											"type": "text"
+										},
+										{
+											"key": "avatar",
+											"type": "file",
+											"src": "/C:/Users/Ahmed Medo/Downloads/WhatsApp Image 2024-11-13 at 2.25.59 PM.jpeg"
+										}
+									]
 								},
 								"url": {
 									"raw": "http://localhost:3000/api/student/1",
@@ -558,15 +805,15 @@
 								},
 								{
 									"key": "Content-Length",
-									"value": "229"
+									"value": "335"
 								},
 								{
 									"key": "ETag",
-									"value": "W/\"e5-IgAs1yuUx02DRJO4YOCEmlwkFS8\""
+									"value": "W/\"14f-54uZICT1y8ujK551fQXPdugmWxs\""
 								},
 								{
 									"key": "Date",
-									"value": "Fri, 01 Nov 2024 15:46:39 GMT"
+									"value": "Sun, 17 Nov 2024 19:33:34 GMT"
 								},
 								{
 									"key": "Connection",
@@ -578,7 +825,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n    \"id\": 1,\n    \"name\": \"lucky one\",\n    \"phone_number\": \"123132\",\n    \"parent_phone_1\": \"777777\",\n    \"parent_phone_2\": null,\n    \"parent_phone_3\": null,\n    \"avatar\": null,\n    \"group_id\": null,\n    \"createdAt\": \"2024-11-01T15:43:39.792Z\",\n    \"updatedAt\": \"2024-11-01T15:46:39.428Z\"\n}"
+							"body": "{\n    \"id\": 1,\n    \"name\": \"rrrr\",\n    \"phone_number\": \"11111133\",\n    \"parent_phone_1\": \"23123123\",\n    \"parent_phone_2\": null,\n    \"parent_phone_3\": null,\n    \"avatar\": \"http://localhost:3000/uploads/avatars/b90b3e7d078caf669191bc24ad22c171.jpeg\",\n    \"group_id\": null,\n    \"isDeleted\": false,\n    \"blocked\": false,\n    \"createdAt\": \"2024-11-17T18:21:47.822Z\",\n    \"updatedAt\": \"2024-11-17T19:33:34.492Z\"\n}"
 						}
 					]
 				},
@@ -587,17 +834,26 @@
 					"request": {
 						"method": "DELETE",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"asda\":\"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:3000/api/student/2",
+							"raw": "http://localhost:65000/api/student/2222",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"student",
-								"2"
+								"2222"
 							]
 						}
 					},
@@ -675,7 +931,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"sunday_elfarag\",\r\n    \"day_of_week\":\"Monday\",\r\n    \"time_of_day\":\"5PM\"\r\n}",
+							"raw": "{\r\n    \"name\": \"sunday_elfarag1\",\r\n    \"day_of_week\":\"Monday\",\r\n    \"time_of_day\":\"6AM\",\r\n    \"preiod\":2\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -683,12 +939,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/group",
+							"raw": "http://localhost:65000/api/group",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"group"
@@ -763,6 +1019,73 @@
 							],
 							"cookie": [],
 							"body": "{\n    \"last_lecture_number\": 0,\n    \"id\": 1,\n    \"name\": \"sunday_elfarag\",\n    \"day_of_week\": \"Monday\",\n    \"time_of_day\": \"5PM\",\n    \"updatedAt\": \"2024-11-01T15:54:55.444Z\",\n    \"createdAt\": \"2024-11-01T15:54:55.444Z\"\n}"
+						},
+						{
+							"name": "Faild",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"sunday_elfarag1\",\r\n    \"day_of_week\":\"Monday\",\r\n    \"time_of_day\":\"6AM\",\r\n    \"preiod\":2\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/group",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"group"
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "933"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"3a5-pUNvD85tEF7ItlQPyqfjJvhkj90\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 16 Nov 2024 21:10:02 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"error\",\n    \"error\": {\n        \"statusCode\": 500,\n        \"status\": \"error\"\n    },\n    \"message\": \"Time conflict: A group already exists on Monday between the specified hours 6AM to 8AM.\",\n    \"stack\": \"Error: Time conflict: A group already exists on Monday between the specified hours 6AM to 8AM.\\n    at Function.<anonymous> (C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\models\\\\Group.js:90:11)\\n    at async Function.runHooks (C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\node_modules\\\\sequelize\\\\lib\\\\hooks.js:96:7)\\n    at async Group.save (C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\node_modules\\\\sequelize\\\\lib\\\\model.js:2436:7)\\n    at async Function.create (C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\node_modules\\\\sequelize\\\\lib\\\\model.js:1362:12)\\n    at async C:\\\\Users\\\\Ahmed Medo\\\\Desktop\\\\Projects\\\\SMS---Desktop\\\\backend\\\\controllers\\\\groupController.js:22:22\"\n}"
 						}
 					]
 				},
@@ -869,6 +1192,110 @@
 					]
 				},
 				{
+					"name": "Get a Group Week Table",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:65000/api/group/week/table",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "65000",
+							"path": [
+								"api",
+								"group",
+								"week",
+								"table"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/group/week/table",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"group",
+										"week",
+										"table"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "420"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"1a4-K9FB2oHiUa0emPzPw6PCdgN2T+k\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 17 Nov 2024 19:20:58 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"day\": \"Sunday\",\n        \"groups\": []\n    },\n    {\n        \"day\": \"Monday\",\n        \"groups\": [\n            {\n                \"id\": 1,\n                \"name\": \"sunday_elfarag1\",\n                \"start_time\": \"6AM\",\n                \"end_time\": \"8AM\"\n            }\n        ]\n    },\n    {\n        \"day\": \"Tuesday\",\n        \"groups\": []\n    },\n    {\n        \"day\": \"Wednesday\",\n        \"groups\": [\n            {\n                \"id\": 2,\n                \"name\": \"sunday_elfarag2\",\n                \"start_time\": \"1PM\",\n                \"end_time\": \"3PM\"\n            },\n            {\n                \"id\": 3,\n                \"name\": \"sunday_elfarag3\",\n                \"start_time\": \"4PM\",\n                \"end_time\": \"6PM\"\n            }\n        ]\n    },\n    {\n        \"day\": \"Thursday\",\n        \"groups\": []\n    },\n    {\n        \"day\": \"Friday\",\n        \"groups\": []\n    },\n    {\n        \"day\": \"Saturday\",\n        \"groups\": []\n    }\n]"
+						}
+					]
+				},
+				{
 					"name": "Get all Group Students",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -886,12 +1313,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/group/students/1",
+							"raw": "http://localhost:65000/api/group/students/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"group",
@@ -990,12 +1417,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/group",
+							"raw": "http://localhost:65000/api/group",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"group"
@@ -1087,12 +1514,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/group/1",
+							"raw": "http://localhost:65000/api/group/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"group",
@@ -1177,12 +1604,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/group/1",
+							"raw": "http://localhost:65000/api/group/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"group",
@@ -1262,17 +1689,56 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"backup_name\":\"backup_alpha\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:3000/api/backup/",
+							"raw": "http://localhost:65000/api/backup/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"backup",
 								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "restore backup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"backupPath\":\"C:\\\\Users\\\\Ahmed Medo\\\\Documents\\\\SMS-Backup\\\\empty.sqlite\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:65000/api/backup/restore",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "65000",
+							"path": [
+								"api",
+								"backup",
+								"restore"
 							]
 						}
 					},
@@ -1290,7 +1756,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"studentId\":6,\r\n    \"groupId\":1\r\n}",
+							"raw": "{\r\n    \"studentId\":5,\r\n    \"groupId\":1,\r\n    \"homework\":\"finish\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1298,16 +1764,353 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/attendance/attend",
+							"raw": "http://localhost:65000/api/attendance/attend",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"attendance",
 								"attend"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Failed",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"studentId\":5,\r\n    \"groupId\":1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/attendance/attend",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"attendance",
+										"attend"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "43"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2b-H0mQ/YmEuXmHBmu7Aco6H5feQnk\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 09 Nov 2024 19:32:47 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Student has already attended.\"\n}"
+						},
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"studentId\":6,\r\n    \"groupId\":1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/attendance/attend",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"attendance",
+										"attend"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "42"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2a-LZQNRO4XZr/MalZbSBa56OtJxXE\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 09 Nov 2024 19:32:58 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Student attendance recorded.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Attend",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"studentId\":5,\r\n    \"groupId\":1,\r\n    \"homework\":\"finish\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:65000/api/attendance/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "65000",
+							"path": [
+								"api",
+								"attendance",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Failed",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"studentId\":5,\r\n    \"groupId\":1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/attendance/attend",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"attendance",
+										"attend"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "43"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2b-H0mQ/YmEuXmHBmu7Aco6H5feQnk\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 09 Nov 2024 19:32:47 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Student has already attended.\"\n}"
+						},
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"studentId\":6,\r\n    \"groupId\":1\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/attendance/attend",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"attendance",
+										"attend"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "42"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2a-LZQNRO4XZr/MalZbSBa56OtJxXE\""
+								},
+								{
+									"key": "Date",
+									"value": "Sat, 09 Nov 2024 19:32:58 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Student attendance recorded.\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Attend",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"homework\":\"finish\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:65000/api/attendance/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "65000",
+							"path": [
+								"api",
+								"attendance",
+								"1"
 							]
 						}
 					},
@@ -1465,12 +2268,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/attendance/1",
+							"raw": "http://localhost:65000/api/attendance/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"attendance",
@@ -1567,12 +2370,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/attendance/",
+							"raw": "http://localhost:65000/api/attendance/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"attendance",
@@ -1657,12 +2460,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/attendance/group/1",
+							"raw": "http://localhost:65000/api/attendance/group/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"attendance",
@@ -1740,12 +2543,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/attendance/lecture/1",
+							"raw": "http://localhost:65000/api/attendance/lecture/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"attendance",
@@ -1837,12 +2640,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/monthexam/",
+							"raw": "http://localhost:65000/api/monthexam/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"monthexam",
@@ -1939,12 +2742,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/monthexam/",
+							"raw": "http://localhost:65000/api/monthexam/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"monthexam",
@@ -2041,12 +2844,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/monthexam/report/1",
+							"raw": "http://localhost:65000/api/monthexam/report/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"monthexam",
@@ -2210,12 +3013,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/monthexam/grade",
+							"raw": "http://localhost:65000/api/monthexam/grade",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"monthexam",
@@ -2305,12 +3108,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/lecture/",
+							"raw": "http://localhost:65000/api/lecture/",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"lecture",
@@ -2386,12 +3189,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/api/lecture/1",
+							"raw": "http://localhost:65000/api/lecture/1",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"lecture",
@@ -2476,12 +3279,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/lecture/grade",
+							"raw": "http://localhost:65000/api/lecture/grade",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"lecture",
@@ -2575,12 +3378,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/lecture/grade",
+							"raw": "http://localhost:65000/api/lecture/grade",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "3000",
+							"port": "65000",
 							"path": [
 								"api",
 								"lecture",

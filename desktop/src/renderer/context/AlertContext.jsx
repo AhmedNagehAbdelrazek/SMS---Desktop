@@ -10,9 +10,15 @@ export function useAlert() {
 export function AlertProvider({ children }) {
   const [alerts, setAlerts] = useState([]);
 
-  const addAlert = (message, description, type = "info") => {
+  const addAlert = (message, description, type = "info", delay = null) => {
     const id = new Date().getTime();
     setAlerts((prev) => [...prev, { id, message, description, type }]);
+
+    if (delay) {
+      setTimeout(() => {
+        removeAlert(id);
+      }, delay * 1000);
+    }
   };
 
   const removeAlert = (id) => {
@@ -22,7 +28,7 @@ export function AlertProvider({ children }) {
   return (
     <AlertContext.Provider value={{ addAlert }}>
       {children}
-      <div style={{ position: "fixed", top: 16, left: 16, zIndex: 1000 }}>
+      <div className="fixed bottom-4 right-4 z-50 space-y-2">
         {alerts.map((alert) => (
           <Alert
             key={alert.id}
@@ -32,7 +38,7 @@ export function AlertProvider({ children }) {
             showIcon
             closable
             onClose={() => removeAlert(alert.id)}
-            style={{ marginBottom: 8 }}
+            className="mb-2"
           />
         ))}
       </div>

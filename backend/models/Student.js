@@ -10,30 +10,53 @@ Student.init(
       type: DataTypes.BIGINT,
       primaryKey: true,
       autoIncrement: true,
+      get(){
+        const id = this.getDataValue ? this.getDataValue('id') : this.id;
+        return id ? id.toString().padStart(8, '0') : null;
+      }
     },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     phone_number: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: false,
+      unique:{
+        msg: "This phone number is already in use."
+      },
+      validate:{
+        validatePhoneNumber(value){
+          if(!value.startsWith("01")){
+            throw new Error("phone number has to start with 01");
+          }
+          if(value.length != 11){
+            throw new Error("phone number has to be 11 number");
+          }
+        },
+
+      }
     },
     parent_phone_1: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: true,
     },
     parent_phone_2: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: true,
     },
     parent_phone_3: {
-      type: DataTypes.STRING,
+      type: DataTypes.NUMBER,
       allowNull: true,
     },
     avatar: {
       type: DataTypes.STRING,
       allowNull: true,
+      get(){
+        const avatar = this.getDataValue ? this.getDataValue('avatar') : this.avatar;
+        let port = global.PORT || 3000;
+        return avatar ? `http://localhost:${port}${avatar}` : null;
+      }
     },
     group_id:{
         type: DataTypes.INTEGER,
@@ -48,6 +71,10 @@ Student.init(
       type:DataTypes.BOOLEAN,
       defaultValue:false
     },
+    blocked:{
+      type:DataTypes.BOOLEAN,
+      defaultValue:false,
+    }
   },
   {
     sequelize,
@@ -55,6 +82,15 @@ Student.init(
     tableName: "students",
   }
 );
+
+Student.beforeCreate(async (student, options) => {
+  try {
+    await student.validate(); // Trigger validation before creation
+  } catch (error) {
+    throw error; // Throw custom validation errors
+  }
+});
+
 
 Student.beforeBulkCreate(async (students, options) => {
   const groupIds = students

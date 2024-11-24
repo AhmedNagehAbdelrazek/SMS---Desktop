@@ -13,21 +13,34 @@ const configuration: webpack.Configuration = {
   stats: 'errors-only',
 
   module: {
-    rules: [
-      {
-        test: /\.[jt]sx?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'ts-loader',
-          options: {
-            // Remove this line to enable type checking in webpack builds
-            transpileOnly: true,
-            compilerOptions: {
-              module: 'esnext',
-            },
-          },
+    // rules: [
+    //   {
+    //     test: /\.[jt]sx?$/,
+    //     exclude: /node_modules/,
+    //     use: {
+    //       loader: 'ts-loader',
+    //       options: {
+    //         // Remove this line to enable type checking in webpack builds
+    //         transpileOnly: true,
+    //         compilerOptions: {
+    //           module: 'esnext',
+    //         },
+    //       },
+    //     },
+    //   },
+
+      rules: [
+        {
+          test: /\.tsx?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/,
         },
-      },
+        {
+          test: /\.js$/,
+          use: 'babel-loader',
+          exclude: /node_modules/,
+        },
+      ],
     ],
   },
 

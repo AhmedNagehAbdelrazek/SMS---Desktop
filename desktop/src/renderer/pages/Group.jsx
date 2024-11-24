@@ -3,9 +3,11 @@ import { useEffect, useState } from 'react';
 import { Row, Col } from 'antd';
 import { SearchBar } from '../components/Bars';
 import { StudentTable } from '../components/Tables';
-import { ConfirmActionModal, StudentActionsModal } from '../components/Modals';
+import { StudentActionsModal } from '../components/Modals';
+import { useParams } from 'react-router-dom';
 
-export default function GroupPage() {
+export default function Group() {
+  const { id } = useParams();
   const [students, setStudents] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -59,12 +61,6 @@ export default function GroupPage() {
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         onAction={handleActionClick}
-      />
-      <ConfirmActionModal
-        action={confirmAction}
-        visible={isConfirmModalVisible}
-        onConfirm={() => console.log('Action confirmed')}
-        onCancel={() => setIsConfirmModalVisible(false)}
       />
     </div>
   );

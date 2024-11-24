@@ -3,6 +3,7 @@
  */
 
 import webpack from 'webpack';
+import rendererConfig from './webpack.config.renderer.dev.ts';
 import path from 'path';
 import { merge } from 'webpack-merge';
 import baseConfig from './webpack.config.base';
@@ -25,10 +26,7 @@ const configuration: webpack.Configuration = {
 
   externals: ['fsevents', 'crypto-browserify'],
 
-  /**
-   * Use `module` from `webpack.config.renderer.dev.js`
-   */
-  module: require('./webpack.config.renderer.dev').default.module,
+  module: rendererConfig.module,
 
   entry: {
     renderer: Object.keys(dependencies || {}),

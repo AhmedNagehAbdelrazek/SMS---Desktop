@@ -62,69 +62,27 @@ const configuration: webpack.Configuration = {
 
   module: {
     rules: [
-      // {
-      //   test: /\.s?(c|a)ss$/,
-      //   use: [
-      //     'style-loader',
-      //     'sass-loader',
-      //     {
-      //       loader: 'css-loader',
-      //       options: {
-      //         modules: true,
-      //         sourceMap: true,
-      //         importLoaders: 1,
-      //       },
-      //     },
-
-      //   ],
-      //   include: /\.module\.s?(c|a)ss$/,
-      // },
       {
-        test: /\.s[ac]ss$/i,
+        test: /\.css$/, // Match only .css files
+        exclude: /node_modules/, // Exclude node_modules
         use: [
-            'style-loader',
-            'css-loader',
-            {
-                loader: 'sass-loader',
-                options: {
-                    implementation: require('sass'),
-                },
-            },
+          'style-loader',    // Inject styles into DOM
+          'css-loader',      // Interpret @import and url()
+          'postcss-loader',  // Process Tailwind and PostCSS plugins
         ],
       },
       {
-        test: /\.s?css$/,
-        use: ['style-loader', 'css-loader', 'sass-loader'],
-        exclude: /\.module\.s?(c|a)ss$/,
-      },
-      // Fonts
-      {
-        test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        type: 'asset/resource',
-      },
-      // Images
-      {
-        test: /\.(png|jpg|jpeg|gif)$/i,
-        type: 'asset/resource',
-      },
-      // SVG
-      {
-        test: /\.svg$/,
+        test: /\.s[ac]ss$/, // Match .scss or .sass files
         use: [
-          {
-            loader: '@svgr/webpack',
-            options: {
-              prettier: false,
-              svgo: false,
-              svgoConfig: {
-                plugins: [{ removeViewBox: false }],
-              },
-              titleProp: true,
-              ref: true,
-            },
-          },
-          'file-loader',
+          'style-loader',    // Inject styles into DOM
+          'css-loader',      // Interpret @import and url()
+          'postcss-loader',  // Process PostCSS plugins
+          'sass-loader',     // Compile Sass to CSS
         ],
+      },
+      {
+        test: /\.(png|jpg|jpeg|gif|woff|woff2|eot|ttf|otf|svg)$/,
+        type: 'asset/resource', // Handle assets
       },
     ],
   },

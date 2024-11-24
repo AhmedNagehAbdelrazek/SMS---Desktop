@@ -3,7 +3,7 @@ const Attendance = require('./Attendance');
 const Exam = require('./Exam');
 const Group = require('./Group');
 const Lecture = require('./Lecture');
-const Lecture_Exam = require('./Lecture_exam');
+const Lecture_Exam = require('./Lecture_Exam');
 const Month_Exam = require('./Month_exam');
 const Student = require('./Student');
 

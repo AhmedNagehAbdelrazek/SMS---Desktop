@@ -1,4 +1,4 @@
-const { addStudent, getAllStudents, getStudentById, updateStudent, deleteStudent, chnageGroup } = require("../controllers/StudentController");
+const { addStudent, getAllStudents, getStudentById, updateStudent, deleteStudent, chnageGroup, searchStudents } = require("../controllers/StudentController");
 
 const router = require("express").Router();
 
@@ -10,5 +10,7 @@ router.patch('/:id', updateStudent);
 router.delete('/:id', deleteStudent); 
 
 router.patch("/group/:id",chnageGroup);
+
+router.get('/search/students', searchStudents);
 
 module.exports = router;

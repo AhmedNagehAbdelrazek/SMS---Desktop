@@ -3,7 +3,8 @@ const { Attendance, Lecture, Student } = require("../models");
 const { getLastLectureId } = require("../utils/Group");
 
 exports.attend = asyncHandler(async (req, res) => {
-    const { studentId, groupId } = req.body;
+    const { studentId, groupId ,homework } = req.body;
+
     const student = await Student.findOne({ where: { id:studentId, isDeleted: false , group_id: groupId} });
     if(!student) {
         return res.status(404).json({ message: "Student not found." });
@@ -15,14 +16,23 @@ exports.attend = asyncHandler(async (req, res) => {
     const lectureId = await getLastLectureId(groupId);
     console.log(lectureId,studentId);
 
-    await Attendance.create({
+    const attendance = await Attendance.create({
         student_id: studentId,
         lecture_id: lectureId,
+        homework_type:homework,
         attended:true
     });
-    res.status(200).json({ message: "Student attendance recorded." });
+    res.status(200).json({ message: "Student attendance recorded." ,attendance});
 });
+exports.getAttend = asyncHandler(async (req, res) => {
+    const { attendId } = req.params;
 
+    const attendance = await Attendance.findByPk(attendId);
+    if(!attendance) {
+        return res.status(404).json({ message: "Attendance not found." });
+    }
+    res.status(200).json(attendance);
+})
 exports.getAllAttendances = asyncHandler(async (req, res) => {
     const attendances = await Attendance.findAll({
         include: [Lecture, Student],
@@ -31,33 +41,19 @@ exports.getAllAttendances = asyncHandler(async (req, res) => {
     res.status(200).json(attendances);
 });
 
-// exports.getAllAttendancesForGroup = asyncHandler(async (req, res) => {
-//     const { groupId } = req.params;
-//     // const attendances = await Attendance.findAll({ include: [Lecture, Student], where: { isDeleted: false } });
-//     const allLectures = await Lecture.findAll({ where: { group_id: groupId } });
-//     const attendances = await Promise.all(
-//         allLectures.map(async (lecture) => {
-//             const attendance = await Attendance.findAll({
-//                 where: { lecture_id: lecture.id, isDeleted: false },
-//             });
-//             const notAttended = await Student.findAll({
-//                 where: {
-//                     group_id: groupId,
-//                     isDeleted: false,
-//                 },
-//                 include: [
-//                     {
-//                         Lecture,
-//                         include: [Attendance],
-//                     },
-//                 ],
-//             });
-//             return { lecture, attendance, notAttended: notAttended };
-//         })
-//     );
+exports.updateAttendanceHomework = asyncHandler(async(req,res)=>{
+    const { homework } = req.body;
+    const {id:attendanceId} = req.params;
 
-//     res.status(200).json(attendances);
-// });
+    const attendance = await Attendance.findByPk(attendanceId);
+    if(!attendance) {
+        return res.status(404).json({ message: "Attendance not found." });
+    }
+    attendance.homework_type = homework;
+    await attendance.save();
+
+    res.status(200).json({ message: "Attendance updated." ,attendance});
+})
 
 exports.getAllAttendancesForGroup = asyncHandler(async (req, res) => {
     const { groupId } = req.params;
@@ -115,11 +111,12 @@ exports.getAllAttendancesForLecture = asyncHandler(async (req, res) => {
     // Get all attendance records for the lecture
     const attendanceRecords = await Attendance.findAll({
         where: { lecture_id: lectureId, isDeleted: false },
+        attributes: ['id','homework_type','attended'],
         include: [{ model: Student, attributes: ['id', 'name'] }],
     });
 
     // Extract IDs of students who attended
-    const attendedStudentIds = attendanceRecords.map(record => record.student_id);
+    const attendedStudentIds = attendanceRecords.map(record => record.Student.id);
 
     // Get all students in the group, and filter for non-attended
     const allStudents = await Student.findAll({
@@ -134,10 +131,7 @@ exports.getAllAttendancesForLecture = asyncHandler(async (req, res) => {
     // Prepare response with attended and not attended students
     const response = {
         lecture: lecture.name,
-        attended: attendanceRecords.map(record => ({
-            id: record.student_id,
-            name: record.Student.name,
-        })),
+        attended: attendanceRecords,
         notAttended: notAttendedStudents,
     };
 
