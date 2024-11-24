@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const { Student, Group } = require("../models/index");
+const { Student, Group, Lecture_Exam, Attendance, Lecture } = require("../models/index");
 const upload = require("../config/uploadAvatars");
 const { Op } = require("sequelize");
 
@@ -70,6 +70,7 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
     const page = parseInt(req.query.page) || 1; // Default to 1 if no page is provided
     const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
     const all = req.query.all;
+    const search = req.query.search;
 
     if(all == "true"){
         const students = await Student.findAll();
@@ -81,10 +82,23 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
 
     try {
         // Fetch the students with pagination
-        const students = await Student.findAll({
-            offset: offset,
-            limit: limit,
-        });
+        let students = null;
+        if(search){
+            students = await Student.findAll({
+                where: {
+                    [Op.or]: [
+                        { name: { [Op.like]: `%${search}%` } },
+                        { phone_number: { [Op.like]: `%${search}%` } }, // Correct column name
+                        { id: { [Op.like]: `%${search}%` } },
+                    ],
+                },
+            });
+        }else{
+            students = await Student.findAll({
+                offset: offset,
+                limit: limit,
+            });
+        }
 
         // Get the total count of students to calculate total pages
         const totalCount = await Student.count();
@@ -129,7 +143,9 @@ exports.updateStudent = [
             if (!student) {
                 throw { message: 'Student not found' };
             }
-            const avatar = req.file;
+
+            let avatar = req.file;
+            
             if (avatar && student.avatar) {
                 // delete the old avatar
                 let avatarPath = student.avatar.split('/');
@@ -141,11 +157,11 @@ exports.updateStudent = [
             // const baseUrl = `${req.protocol}://${req.get("host")}`; // Get the base URL dynamically
             const avatarPath = req.file ? `/uploads/avatars/${req.file.filename}` : null;
     
-            body.avatar = avatarPath;
-    
+            if(avatarPath){
+                body.avatar = avatarPath;
+            }
             const updatedStudent = await student.update({
                 ...body,
-                avatar: avatarPath,
             });
     
             return res.status(200).json(updatedStudent);
@@ -187,28 +203,76 @@ exports.chnageGroup = asyncHandler(async (req, res) => {
     return res.status(200).json(updatedStudent);
 });
 
-exports.searchStudents = asyncHandler(async (req, res) => {
-    const { search } = req.query;
-    console.log("search", search);
-    
-    console.log(typeof search);
-    if (!search) {
-        throw { message: "Search term is required." };
+exports.analyzeStudentPerformance = asyncHandler( async(req, res) => {
+    const { id:studentId } = req.params;
+    try {
+        
+        // Step 1: Fetch attendance records for the student
+        const attendanceRecords = await Attendance.findAll({
+            where: { student_id: studentId, attended: true, isDeleted: false },
+            include: {
+                model: Lecture,
+                attributes: ['name', 'lecture_number', 'group_id'],
+                include:{
+                    model: Group,
+                    attributes: ['name','id']
+                }
+            },
+        });
+        if (attendanceRecords.length === 0) {
+            return res.status(200).json({
+                studentId, 
+                message: 'No attendance records found.', 
+                overallGrade: 0, 
+                report: []
+            });
+        }
+
+        // Step 2: Fetch grades for the attended lectures
+        const lectureIds = attendanceRecords.map(record => record.lecture_id);
+        const grades = await Lecture_Exam.findAll({
+            where: { 
+                student_id: studentId, 
+                lecture_id: lectureIds, 
+                isDeleted: false 
+            },
+            attributes: ['lecture_id', 'grade'],
+        });
+
+        // Map grades to their corresponding lectures
+        const gradesMap = grades.reduce((map, gradeRecord) => {
+            map[gradeRecord.lecture_id] = gradeRecord.grade;
+            return map;
+        }, {});
+
+        // Step 3: Calculate overall grade
+        const totalGrades = grades.reduce((sum, record) => sum + record.grade, 0);
+        const overallGrade = (totalGrades / attendanceRecords.length).toFixed(2);
+        const overallHomeworkGrade = (attendanceRecords.reduce((sum, record) => sum + parseInt(record.homework_type), 0) / grades.length).toFixed(2); 
+
+        // Step 4: Generate the report
+        const report = attendanceRecords.map(record => {
+            const grade = gradesMap[record.lecture_id] || 0;
+            return {
+                id: record.lecture_id,
+                name: record.Lecture.name,
+                lecture_number: record.Lecture.lecture_number,
+                group: record.Lecture.Group,
+                attended: record.attended,
+                isCompensatory: record.isCompensatory,
+                homeworkType: record.homework_type,
+                LectureGrade:grade,
+            };
+        });
+
+        return res.status(200).json({ 
+            studentId,
+            overallGrade,
+            overallHomeworkGrade,
+            report,
+        });
+    } catch (error) {
+        console.error('Error analyzing student performance:', error);
+        throw new Error('Could not analyze student performance.');
     }
-
-    const students = await Student.findAll({
-        where: {
-            [Op.or]: [
-                { name: { [Op.like]: `%${search}%` } },
-                { phone_number: { [Op.like]: `%${search}%` } }, // Correct column name
-                { id: { [Op.like]: `%${search}%` } },
-            ],
-        },
-    });
-
-    if (students.length === 0) {
-        return res.status(404).json({ message: "No students found." });
-    }
-
-    return res.status(200).json(students);
 });

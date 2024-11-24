@@ -22,9 +22,7 @@ Student.init(
     phone_number: {
       type: DataTypes.NUMBER,
       allowNull: false,
-      unique:{
-        msg: "This phone number is already in use."
-      },
+      unique:true,
       validate:{
         validatePhoneNumber(value){
           if(!value.startsWith("01")){

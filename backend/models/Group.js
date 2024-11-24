@@ -2,7 +2,18 @@ const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');  // Import the Sequelize instance
 const { Op } = require('sequelize'); 
 
-class Group extends Model {}
+class Group extends Model {
+  getTime(){
+    const convertTo24Hour = (time) => {
+      const [hours, modifier] = time.match(/^(\d+)(AM|PM)$/).slice(1, 3);
+      let hour = parseInt(hours, 10);
+      if (modifier === "PM" && hour !== 12) hour += 12;
+      if (modifier === "AM" && hour === 12) hour = 0;
+      return hour;
+    };
+    return convertTo24Hour(group.time_of_day);
+  }
+}
 
 Group.init(
   {
