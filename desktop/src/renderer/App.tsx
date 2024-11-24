@@ -1,26 +1,29 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import ListStudents from './components/ListStudents';
-import AddStudents from './components/AddStrudent';
-import { Col, Flex, Row } from 'antd';
-
-function Hello() {
-  return (
-    <Row className='main' style={{ height: '100vh' }}>
-      <Col style={{overflow:"auto"}} >
-        <AddStudents />
-        <ListStudents />
-      </Col>
-    </Row>
-  );
-}
+import {
+  Group,
+  Attendance,
+  Settings,
+  Student,
+  Layout,
+} from './pages';
+import { AlertProvider } from './context';
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Hello />} />
-      </Routes>
-    </Router>
+    <AlertProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route path="/" element={<Student />} />
+            <Route path="/:id" element={<Student />} />
+            <Route path="group" element={<Group />} />
+            <Route path="group/:id" element={<Group />} />
+            <Route path="attendance" element={<Attendance />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AlertProvider>
   );
 }

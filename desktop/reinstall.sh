@@ -1,0 +1,1 @@
+rm -rf .erb/dll node_modules/ package-lock.json && npm cache clean --force && yarn cache clean && npm i --legacy-peer-dep
