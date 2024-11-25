@@ -11,4 +11,7 @@ router.delete("/:id", groupController.deleteGroup);  // Delete a group by ID
 
 router.get("/students/:id",groupController.getAllGroupStudents);
 router.get("/week/table",groupController.getWeekGroupsTable);
+
+router.get("/ordered/today",groupController.getOrderedGroupsOnly);
+
 module.exports = router;

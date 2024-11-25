@@ -71,9 +71,15 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
     const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
     const all = req.query.all;
     const search = req.query.search;
+    const deleted = req.query.deleted;
 
     if(all == "true"){
-        const students = await Student.findAll();
+        const students = await Student.findAll({where:{
+            [Op.or]: [
+                { isDeleted: false },
+                { isDeleted: deleted == "true" ? true : false }
+            ]
+        }});
         return res.status(200).json(students);
     }
 
@@ -90,13 +96,22 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
                         { name: { [Op.like]: `%${search}%` } },
                         { phone_number: { [Op.like]: `%${search}%` } }, // Correct column name
                         { id: { [Op.like]: `%${search}%` } },
+                        { isDeleted: false },
+                        { isDeleted: deleted == "true" ? true : false }
                     ],
+                    
                 },
             });
         }else{
             students = await Student.findAll({
                 offset: offset,
                 limit: limit,
+                where:{
+                    [Op.or]: [
+                        { isDeleted: false },
+                        { isDeleted: deleted == "true" ? true : false }
+                    ]
+                }
             });
         }
 
