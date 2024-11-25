@@ -4,24 +4,59 @@ const { getLastLectureId } = require("../utils/Group");
 
 exports.attend = asyncHandler(async (req, res) => {
     const { studentId, groupId ,homework } = req.body;
-
-    const student = await Student.findOne({ where: { id:studentId, isDeleted: false , group_id: groupId} });
+    
+    const student = await Student.findOne({ where: { id:studentId, isDeleted: false } });
     if(!student) {
         return res.status(404).json({ message: "Student not found." });
     }
-    const hasAttended = await Attendance.findOne({ where: { student_id: studentId , isDeleted:false} });
-    if(hasAttended) {
-        return res.status(400).json({ message: "Student has already attended." });
-    }
-    const lectureId = await getLastLectureId(groupId);
-    console.log(lectureId,studentId);
 
-    const attendance = await Attendance.create({
-        student_id: studentId,
-        lecture_id: lectureId,
-        homework_type:homework,
-        attended:true
-    });
+    //TODO check if student has already attended and wants to attend to another group send a different message
+    
+    const lectureId = await getLastLectureId(groupId || student.group_id);
+
+    const hasAttended = await Attendance.findOne({ where: { student_id: studentId , isDeleted:false} });
+    if(hasAttended && groupId && student.group_id != groupId) {
+        let attendance = await Attendance.create({
+            student_id: studentId,
+            lecture_id: lectureId,
+            homework_type:homework,
+            isCompensatory:true,
+            attended:true
+        });
+        return res.status(200).json({ message: "this Student has already attended this lecture in his group." ,attendance});
+    }
+
+    if(hasAttended && student.group_id == groupId) {
+        return res.status(400).json({ message: "Student has already attended in his group." });
+    }
+    
+    let attendance = null;
+    if(groupId && student.group_id != groupId) {
+        // check if student is not in the group that means he attended a Compensatory lecture
+        attendance = await Attendance.create({
+            student_id: studentId,
+            lecture_id: lectureId,
+            homework_type:homework,
+            isCompensatory:true,
+            attended:true
+        });
+    }else if(student.group_id == groupId || groupId == null) {
+        // check if student is in the group that means he attended a lecture
+        attendance = await Attendance.create({
+            student_id: studentId,
+            lecture_id: lectureId,
+            homework_type:homework,
+            attended:true
+        });
+    }else{
+        attendance = await Attendance.create({
+            student_id: studentId,
+            lecture_id: lectureId,
+            homework_type:homework,
+            attended:true
+        });
+    }
+
     res.status(200).json({ message: "Student attendance recorded." ,attendance});
 });
 exports.getAttend = asyncHandler(async (req, res) => {
@@ -49,7 +84,7 @@ exports.updateAttendanceHomework = asyncHandler(async(req,res)=>{
     if(!attendance) {
         return res.status(404).json({ message: "Attendance not found." });
     }
-    attendance.homework_type = homework;
+    attendance.homework_type = parseInt(homework);
     await attendance.save();
 
     res.status(200).json({ message: "Attendance updated." ,attendance});

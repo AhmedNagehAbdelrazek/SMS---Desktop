@@ -30,9 +30,17 @@ Attendance.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+    isCompensatory:{
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     homework_type:{
-      type: DataTypes.ENUM("finished","not finished","missing a part","only a part finished"),
-      defaultValue: "not finished",
+      type: DataTypes.NUMBER,
+      defaultValue: 0,
+      validate:{
+        min:0,
+        max:10
+      },
       allowNull: false,
     },
     isDeleted: {
