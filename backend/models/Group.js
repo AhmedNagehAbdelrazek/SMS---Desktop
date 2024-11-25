@@ -1,8 +1,16 @@
-const { DataTypes, Model } = require('sequelize');
-const sequelize = require('../config/database');  // Import the Sequelize instance
-const { Op } = require('sequelize'); 
+const { DataTypes, Model } = require("sequelize");
+const sequelize = require("../config/database"); // Import the Sequelize instance
+const { Op } = require("sequelize");
 
-class Group extends Model {}
+class Group extends Model {
+  getTime() {
+    const convertTo24Hour = (time) => {
+      const [hours, minutes] = time.split(":");
+      return parseInt(hours, 10);
+    };
+    return convertTo24Hour(group.time_of_day);
+  }
+}
 
 Group.init(
   {
@@ -17,32 +25,33 @@ Group.init(
       unique: true,
     },
     last_lecture_number: {
-        type: DataTypes.NUMBER,
-        defaultValue: 0,
+      type: DataTypes.NUMBER,
+      defaultValue: 0,
     },
     day_of_week: {
-      type: DataTypes.ENUM("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"),
-      allowNull: false,
-    },
-    time_of_day: {
-      type: DataTypes.STRING, // Alternatively, use DataTypes.TIME for stricter formatting
+      type: DataTypes.NUMBER,
       allowNull: false,
       validate: {
-        is: /^([1-9]|1[0-2])([AP]M)$/, // Matches formats like "2PM" or "6PM"
+        min: 1,
+        max: 7,
       },
+    },
+    time_of_day: {
+      type: DataTypes.TIME,
+      allowNull: false,
     },
     period: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      defaultValue:2,
+      defaultValue: 2,
       validate: {
         min: 1,
         max: 6,
       },
     },
     isDeleted: {
-      type:DataTypes.BOOLEAN,
-      defaultValue:false
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
   },
   {
@@ -52,44 +61,45 @@ Group.init(
   }
 );
 
-Group.beforeCreate(async (group) => {
-  // Helper function to convert 12-hour time to 24-hour as numbers
-  const convertTo24Hour = (time) => {
-    const [hours, modifier] = time.match(/^(\d+)(AM|PM)$/).slice(1, 3);
-    let hour = parseInt(hours, 10);
-    if (modifier === "PM" && hour !== 12) hour += 12;
-    if (modifier === "AM" && hour === 12) hour = 0;
-    return hour;
-  };
-
-  const startHour = convertTo24Hour(group.time_of_day); // Start hour of new group
-  const endHour = startHour + group.period; // End hour of new group
-
-  // Fetch all groups on the same day
+Group.beforeCreate(async (newGroup, options) => {
   const groupsOnSameDay = await Group.findAll({
     where: {
-      day_of_week: group.day_of_week,
+      day_of_week: newGroup.day_of_week,
       isDeleted: false,
     },
   });
 
-  // Check for overlap with existing groups
-  const hasConflict = groupsOnSameDay.some((existingGroup) => {
-    const existingStart = convertTo24Hour(existingGroup.time_of_day);
-    const existingEnd = existingStart + existingGroup.period;
+  // Helper function to parse and calculate times
+  const parseTime = (timeString) => new Date(`1970-01-01T${timeString}`);
+  const formatTime = (date) => date.toISOString().slice(11, 19);
 
-    // Check for overlap
-    return (
-      (startHour >= existingStart && startHour < existingEnd) || // New group starts during an existing group
-      (endHour > existingStart && endHour <= existingEnd) || // New group ends during an existing group
-      (startHour <= existingStart && endHour >= existingEnd) // New group fully overlaps an existing group
-    );
-  });
+  // Calculate the new group's time range
+  const newStartTime = parseTime(newGroup.time_of_day);
+  const newEndTime = new Date(
+    newStartTime.getTime() + newGroup.period * 60 * 60 * 1000
+  );
 
-  if (hasConflict) {
-    throw new Error(
-      `Time conflict: A group already exists on ${group.day_of_week} between the specified hours ${group.time_of_day} to ${endHour%12}${endHour>=12?"PM":"AM"}.`
+  // Check for conflicts
+  for (const group of groupsOnSameDay) {
+    const groupStartTime = parseTime(group.time_of_day);
+    const groupEndTime = new Date(
+      groupStartTime.getTime() + group.period * 60 * 60 * 1000
     );
+
+    const isOverlapping =
+      (newStartTime >= groupStartTime && newStartTime < groupEndTime) || // New group starts within an existing group
+      (newEndTime > groupStartTime && newEndTime <= groupEndTime) || // New group ends within an existing group
+      (newStartTime <= groupStartTime && newEndTime >= groupEndTime); // New group completely overlaps an existing group
+
+    if (isOverlapping) {
+      throw new Error(
+        `Conflict detected with group "${
+          group.name
+        }" scheduled from ${formatTime(groupStartTime)} to ${formatTime(
+          groupEndTime
+        )}.`
+      );
+    }
   }
 });
 
