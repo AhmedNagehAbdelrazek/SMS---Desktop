@@ -128,7 +128,7 @@ const serverPath = path.join(process.resourcesPath, 'resources', 'server', 'serv
 let serverProcess;
 
 const startServerIfNotRunning = () => {
-  exec('netstat -an | find "3000"', (error, stdout) => {
+  exec('netstat -an | find "65000"', (error, stdout) => {
     if (!stdout.includes('LISTENING')) {
       serverProcess = execFile(serverPath, (err) => {
         if (err) console.error('Error starting server:', err);

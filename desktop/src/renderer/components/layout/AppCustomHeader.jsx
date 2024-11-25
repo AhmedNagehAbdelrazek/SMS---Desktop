@@ -1,23 +1,6 @@
-import { useState, useEffect } from 'react';
 import { ipcRenderer } from 'electron';
-import { MaximizeIcon, MinimizeIcon } from '../icons';
 
 export default function CustomHeader() {
-  const [isFullscreen, setIsFullscreen] = useState(false);
-
-  useEffect(() => {
-    const handleFullscreenChange = (_, fullscreen) => {
-      console.log('fullscreen', fullscreen);
-      setIsFullscreen(fullscreen);
-    };
-
-    ipcRenderer.on('window:fullscreen-changed', handleFullscreenChange);
-
-    return () => {
-      ipcRenderer.removeListener('window:fullscreen-changed', handleFullscreenChange);
-    };
-  }, []);
-
   const handleMinimize = () => {
     ipcRenderer.send('window:minimize');
   };
@@ -31,7 +14,7 @@ export default function CustomHeader() {
   };
 
   return (
-    <div className="flex items-center shadow-sm justify-between fixed rounded-lg left-2 z-50 right-2 top-2 rtl p-4 bg-macos-light-gray text-macos-text h-10" style={{ WebkitAppRegion: 'drag' }}>
+    <div className="flex items-center shadow-sm justify-between fixed rounded-lg left-2 z-[9999] right-2 top-2 rtl p-4 bg-macos-light-gray text-macos-text h-10" style={{ WebkitAppRegion: 'drag' }}>
       {/* Left Side: Mac-style buttons */}
       <div className="flex gap-2 pl-2" style={{ WebkitAppRegion: 'no-drag' }}>
         <div

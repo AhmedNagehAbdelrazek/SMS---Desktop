@@ -1,26 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { Row, Col, Button } from 'antd';
-import { useParams } from 'react-router-dom';
+import { FloatButton, Button, Descriptions, Image, Badge, QRCode } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
+import { useParams, Link } from 'react-router-dom';
 import { SearchBar } from '../components/Bars';
 import { StudentTable } from '../components/Tables';
+import { ConfirmActionModal } from '../components/Modals';
+import { EditStudentDrawer, AddNewStudentDrawer } from '../components/Drawers';
 import { useAlert } from '../context/AlertContext';
 import copyToClipboard from '../utils/copyToClipboard';
-import { EditStudentModal } from '../components/Modals';
+import { Line } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  LineElement,
+  PointElement,
+  LinearScale,
+  Title,
+  CategoryScale,
+  Tooltip,
+} from 'chart.js';
+
+ChartJS.register(
+  LineElement,
+  PointElement,
+  LinearScale,
+  Title,
+  CategoryScale,
+  Tooltip,
+);
 
 export default function Student() {
   const { id } = useParams();
   const { addAlert } = useAlert();
   const [filteredData, setFilteredData] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [groupDetails, setGroupDetails] = useState(null);
   const [confirmAction, setConfirmAction] = useState('');
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isEditDrawerVisible, setIsEditDrawerVisible] = useState(false);
+  const [isAddDrawerVisible, setIsAddDrawerVisible] = useState(false);
+  const qrCodeRef = useRef(null);
 
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://localhost:3000/api/student/${id}`)
+        .get(`http://localhost:65000/api/student/${id}`)
         .then((response) => {
           setSelectedStudent(response.data);
         })
@@ -28,25 +52,39 @@ export default function Student() {
           console.error('Error fetching student:', error);
           searchStudent(id);
         });
-    } else {
-      axios
-        .get(`http://localhost:3000/api/student`)
-        .then((response) => {
-          const data = response.data.map((student) => ({
-            key: student.id,
-            ...student,
-          }));
-          setFilteredData(data);
-        })
-        .catch((error) => {
-          console.error('Error fetching student:', error);
-        });
     }
+
+    getAllStudents();
   }, [id]);
 
-  const searchStudent = (searchText) => {
+  useEffect(() => {
+    if (selectedStudent) {
+      fetchGroupDetails(selectedStudent.group_id);
+    }
+  }, [selectedStudent]);
+
+  const fetchGroupDetails = (groupId) => {
     axios
-      .get(`http://localhost:3000/api/student/search?query=${searchText}`)
+      .get(`http://localhost:65000/api/group/${groupId}`)
+      .then((response) => {
+        setGroupDetails(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching group details:', error);
+        setGroupDetails(null);
+      });
+  };
+
+  const searchStudent = (searchText) => {
+    if (!searchText.trim()) {
+      getAllStudents();
+      return;
+    }
+
+    axios
+      .get(
+        `http://localhost:65000/api/student/search/students?search=${searchText}`,
+      )
       .then((response) => {
         const data = response.data.map((student) => ({
           key: student.id,
@@ -54,7 +92,28 @@ export default function Student() {
         }));
         setFilteredData(data);
       })
-      .catch((error) => console.error('Error searching students:', error));
+      .catch((error) => {
+        if (error.response.status === 404) {
+          addAlert('لا يوجد طلاب يطابقون البحث', '', 'warning', 3);
+          setFilteredData([]);
+        }
+        console.error('Error searching students:', error);
+      });
+  };
+
+  const getAllStudents = () => {
+    axios
+      .get(`http://localhost:65000/api/student?all=true`)
+      .then((response) => {
+        const data = response.data.map((student) => ({
+          key: student.id,
+          ...student,
+        }));
+        setFilteredData(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching student:', error);
+      });
   };
 
   const handleSearch = (searchText) => {
@@ -65,14 +124,263 @@ export default function Student() {
     setSelectedStudent(student);
   };
 
-  const handleActionClick = (action) => {
-    setConfirmAction(action);
-    setIsConfirmModalVisible(true);
+  const handleEditClick = () => {
+    setIsEditDrawerVisible(true);
   };
 
-  const handleEditClick = () => {
-    setIsEditModalVisible(true);
+  const handleDelete = () => {
+    axios
+      .delete(`http://localhost:65000/api/student/${selectedStudent.id}`)
+      .then(() => {
+        addAlert('تم حذف الطالب بنجاح', '', 'success', 3);
+        setSelectedStudent(null);
+        searchStudent('');
+      })
+      .catch((error) => {
+        console.error('Error deleting student:', error);
+        addAlert('حدث خطأ أثناء حذف الطالب', '', 'error');
+      });
   };
+
+  const handleBlock = () => {
+    axios
+      .patch(`http://localhost:65000/api/student/${selectedStudent.id}`, {
+        blocked: true,
+      })
+      .then(() => {
+        addAlert('تم حظر الطالب بنجاح', '', 'success', 3);
+        searchStudent('');
+        setSelectedStudent({ ...selectedStudent, blocked: true });
+      })
+      .catch((error) => {
+        console.error('Error blocking student:', error);
+        addAlert('حدث خطأ أثناء حظر الطالب', '', 'error');
+      });
+  };
+
+  const handleUnblock = () => {
+    axios
+      .patch(`http://localhost:65000/api/student/${selectedStudent.id}`, {
+        blocked: false,
+      })
+      .then(() => {
+        addAlert('تم إلغاء حظر الطالب بنجاح', '', 'success', 3);
+        setSelectedStudent({ ...selectedStudent, blocked: false });
+      })
+      .catch((error) => {
+        console.error('Error unblocking student:', error);
+        addAlert('حدث خطأ أثناء إلغاء حظر الطالب', '', 'error');
+      });
+  };
+
+  const handleDownloadQR = () => {
+    const canvas = qrCodeRef.current.querySelector('canvas');
+    const url = canvas.toDataURL('image/png');
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `student-${selectedStudent.id}-qr.png`;
+    link.click();
+  };
+
+  const degreesData = {
+    labels: [
+      'اختبار 1',
+      'اختبار 2',
+      'اختبار 3',
+      'اختبار 4',
+      'اختبار 5',
+      'اختبار 6',
+      'اختبار 7',
+      'اختبار 8',
+      'اختبار 9',
+      'اختبار 10',
+      'اختبار 11',
+      'اختبار 12',
+      'اختبار 13',
+      'اختبار 14',
+      'اختبار 15',
+      'اختبار 16',
+      'اختبار 17',
+      'اختبار 18',
+      'اختبار 19',
+      'اختبار 20',
+      'اختبار 21',
+      'اختبار 22',
+      'اختبار 23',
+      'اختبار 24',
+      'اختبار 25',
+      'اختبار 26',
+      'اختبار 27',
+      'اختبار 28',
+      'اختبار 29',
+      'اختبار 30',
+    ],
+    datasets: [
+      {
+        label: 'Degrees',
+        data: [65, 59, 80, 81, 56, 55, 40, 70, 81, 56, 55, 40, 81, 56, 55, 40, 70, 81, 56, 55, 40, 70, 81, 56, 55, 40, 70, 81, 56, 55, 40],
+        borderColor: 'rgba(153, 102, 255, 1)',
+        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+        tension: .3,
+        pointRadius: 5,
+        pointHoverRadius: 7,
+      },
+    ],
+  };
+
+  const studentItems = selectedStudent
+    ? [
+        {
+          key: '1',
+          label: 'الاسم',
+          children: (
+            <span
+              className="cursor-pointer hover:underline"
+              onClick={() => copyToClipboard(selectedStudent.name, addAlert)}
+            >
+              {selectedStudent.name}
+            </span>
+          ),
+        },
+        {
+          key: '2',
+          label: 'رقم الهاتف',
+          children: (
+            <span
+              className="cursor-pointer hover:underline"
+              onClick={() =>
+                copyToClipboard(selectedStudent.phone_number, addAlert)
+              }
+            >
+              {selectedStudent.phone_number}
+            </span>
+          ),
+        },
+        {
+          key: '3',
+          label: 'هاتف ولي الأمر 1',
+          children: (
+            <span
+              className="cursor-pointer hover:underline"
+              onClick={() =>
+                copyToClipboard(
+                  selectedStudent.parent_phone_1 || 'لا يوجد',
+                  addAlert,
+                )
+              }
+            >
+              {selectedStudent.parent_phone_1 || 'لا يوجد'}
+            </span>
+          ),
+        },
+        {
+          key: '4',
+          label: 'هاتف ولي الأمر 2',
+          children: (
+            <span
+              className="cursor-pointer hover:underline"
+              onClick={() =>
+                copyToClipboard(
+                  selectedStudent.parent_phone_2 || 'لا يوجد',
+                  addAlert,
+                )
+              }
+            >
+              {selectedStudent.parent_phone_2 || 'لا يوجد'}
+            </span>
+          ),
+        },
+        {
+          key: '5',
+          label: 'هاتف ولي الأمر 3',
+          children: (
+            <span
+              className="cursor-pointer hover:underline"
+              onClick={() =>
+                copyToClipboard(
+                  selectedStudent.parent_phone_3 || 'لا يوجد',
+                  addAlert,
+                )
+              }
+            >
+              {selectedStudent.parent_phone_3 || 'لا يوجد'}
+            </span>
+          ),
+        },
+        {
+          key: '6',
+          label: 'الحالة',
+          children: selectedStudent.blocked ? (
+            <Badge status="error" text="محظور" />
+          ) : (
+            <Badge status="success" text="نشط" />
+          ),
+        },
+        {
+          key: '7',
+          label: 'رمز الاستجابة السريعة',
+          children: (
+            <div
+              ref={qrCodeRef}
+              onClick={handleDownloadQR}
+              className="cursor-pointer"
+            >
+              <QRCode value={selectedStudent.id.toString()} size={160} />
+            </div>
+          ),
+        },
+      ]
+    : [];
+
+  const groupItems = groupDetails
+    ? [
+        {
+          key: '1',
+          label: 'اسم المجموعة',
+          children: (
+            <Link
+              to={`/group/${groupDetails.id}`}
+              className="cursor-pointer hover:underline"
+            >
+              {groupDetails.name}
+            </Link>
+          ),
+        },
+        {
+          key: '2',
+          label: 'رقم المجموعة',
+          children: (
+            <Link
+              to={`/group/${groupDetails.id}`}
+              className="cursor-pointer hover:underline"
+            >
+              {groupDetails.id}
+            </Link>
+          ),
+        },
+        {
+          key: '3',
+          label: 'عدد المحاضرات',
+          children: groupDetails.last_lecture_number,
+        },
+        {
+          key: '4',
+          label: 'اليوم',
+          children: groupDetails.day_of_week,
+        },
+        {
+          key: '5',
+          label: 'الوقت',
+          children: groupDetails.time_of_day,
+        },
+      ]
+    : [
+        {
+          key: '1',
+          label: 'المجموعة',
+          children: 'لا يوجد مجموعة',
+        },
+      ];
 
   return (
     <div
@@ -80,29 +388,35 @@ export default function Student() {
       dir="rtl"
       className="w-full min-h-full p-4 bg-macos-light-gray text-macos-text font-sans"
     >
-      <div>
+      <div className='mb-4'>
         <SearchBar onSearch={handleSearch} />
       </div>
 
       <StudentTable data={filteredData} onRowClick={handleRowClick} />
 
+      <ConfirmActionModal
+        action={confirmAction}
+        visible={isConfirmModalVisible}
+        onConfirm={() => console.log('تم تأكيد الإجراء')}
+        onCancel={() => setIsConfirmModalVisible(false)}
+      />
 
       {selectedStudent && (
         <div className="mt-4 p-4 bg-white rounded-xl">
           <div className="flex flex-col py-12 gap-10 items-center">
             <div className="flex justify-center items-center flex-col gap-4">
-              {selectedStudent.avatar ? (
-                <img
-                  src={selectedStudent.avatar}
-                  alt={selectedStudent.name}
-                  className="w-40 aspect-square rounded-lg"
-                />
-              ) : (
-                <div className="w-40 aspect-square rounded-lg bg-gray-200 flex justify-center items-center">
+              <div className="w-40 aspect-square rounded-lg overflow-hidden bg-gray-200 flex justify-center items-center">
+                {selectedStudent.avatar ? (
+                  <Image
+                    src={selectedStudent.avatar}
+                    alt={selectedStudent.name}
+                    className="min-w-full min-h-full object-cover"
+                  />
+                ) : (
                   <span className="text-2xl text-gray-400">?</span>
-                </div>
-              )}
-              <div className="flex flex-col justify-center gap-2 w-full items-center">
+                )}
+              </div>
+              <div className="flex flex-col justify-center w-full items-center">
                 <h2
                   onClick={() => {
                     copyToClipboard(selectedStudent.name, addAlert);
@@ -115,90 +429,97 @@ export default function Student() {
                   onClick={() => {
                     copyToClipboard(selectedStudent.id, addAlert);
                   }}
-                  className="text-textSecondary font-bold hover:underline cursor-pointer select-none"
+                  className="text-textSecondary hover:underline cursor-pointer select-none"
                 >
                   #{selectedStudent.id}
                 </span>
+                {selectedStudent.blocked && (
+                  <span className="text-red-500 text-lg mt-2">محظور</span>
+                )}
               </div>
             </div>
-            <div
-              className="flex justify-start gap-12 w-full"
-              dir="rtl"
-              lang="ar"
-            >
-              <p
-                className={`text-lg select-none ${
-                  selectedStudent.phone_number
-                    ? 'cursor-pointer hover:underline'
-                    : 'text-red-500 cursor-not-allowed'
-                }`}
-                onClick={() =>
-                  selectedStudent.phone_number &&
-                  copyToClipboard(selectedStudent.phone_number, addAlert)
-                }
+
+            <div className="flex gap-4">
+              <Button
+                onClick={handleEditClick}
+                className="bg-blue-500 text-white rounded-lg"
               >
-                الهاتف: {selectedStudent.phone_number || 'لا يوجد'}
-              </p>
-              <p
-                className={`text-lg select-none ${
-                  selectedStudent.parent_phone_1
-                    ? 'cursor-pointer hover:underline'
-                    : 'text-red-500 cursor-not-allowed'
-                }`}
-                onClick={() =>
-                  selectedStudent.parent_phone_1 &&
-                  copyToClipboard(selectedStudent.parent_phone_1, addAlert)
-                }
+                تعديل
+              </Button>
+              <Button
+                onClick={handleDelete}
+                className="bg-red-500 text-white rounded-lg"
               >
-                هاتف ولي الأمر 1: {selectedStudent.parent_phone_1 || 'لا يوجد'}
-              </p>
-              <p
-                className={`text-lg select-none ${
-                  selectedStudent.parent_phone_2
-                    ? 'cursor-pointer hover:underline'
-                    : 'text-red-500 cursor-not-allowed'
-                }`}
-                onClick={() =>
-                  selectedStudent.parent_phone_2 &&
-                  copyToClipboard(selectedStudent.parent_phone_2, addAlert)
-                }
-              >
-                هاتف ولي الأمر 2: {selectedStudent.parent_phone_2 || 'لا يوجد'}
-              </p>
-              <p
-                className={`text-lg select-none ${
-                  selectedStudent.parent_phone_3
-                    ? 'cursor-pointer hover:underline'
-                    : 'text-red-500 cursor-not-allowed'
-                }`}
-                onClick={() =>
-                  selectedStudent.parent_phone_3 &&
-                  copyToClipboard(selectedStudent.parent_phone_3, addAlert)
-                }
-              >
-                هاتف ولي الأمر 3: {selectedStudent.parent_phone_3 || 'لا يوجد'}
-              </p>
+                حذف
+              </Button>
+              {selectedStudent.blocked ? (
+                <Button
+                  onClick={handleUnblock}
+                  className="bg-green-500 text-white rounded-lg"
+                >
+                  إلغاء الحظر
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleBlock}
+                  className="bg-yellow-500 text-white rounded-lg"
+                >
+                  حظر
+                </Button>
+              )}
             </div>
 
-          <div className="mt-4 flex gap-4">
-            <Button color='#22c55e' onClick={handleEditClick} className="bg-green-500 hover:!border-green-400 hover:!text-green-400 text-white rounded-lg">
-              تعديل
-            </Button>
-            <Button color='#ef4444' className="bg-red-500 hover:!border-red-500 hover:!text-red-500 text-white rounded-lg">
-              حذف
-            </Button>
-            <Button color='#eab308'  className="bg-yellow-500 hover:!border-yellow-500 hover:!text-yellow-500 text-white rounded-lg">
-              تعديل
-            </Button>
-          </div>
+            <div className="w-4/5">
+              <Descriptions
+                title="معلومات الطالب"
+                bordered
+                items={studentItems}
+              />
+              <Descriptions
+                title="تفاصيل المجموعة"
+                bordered
+                items={groupItems}
+                className="mt-4"
+              />
+            </div>
+
+            <div className="w-4/5 bg-macos-hover p-16 rounded-xl mt-8">
+              <h3 className="text-xl font-bold mb-4">الدرجات لكل امتحان</h3>
+              <Line
+                data={degreesData}
+                options={{
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: function (context) {
+                          return `${context.label}: ${context.raw}`;
+                        },
+                      },
+                    },
+                  },
+                }}
+              />
+            </div>
           </div>
         </div>
       )}
 
-      <EditStudentModal
-        visible={isEditModalVisible}
-        onClose={() => setIsEditModalVisible(false)}
+      <EditStudentDrawer
+        visible={isEditDrawerVisible}
+        onClose={() => setIsEditDrawerVisible(false)}
         studentId={selectedStudent?.id}
+      />
+
+      <AddNewStudentDrawer
+        visible={isAddDrawerVisible}
+        onClose={() => setIsAddDrawerVisible(false)}
+      />
+
+      <FloatButton
+        icon={<PlusOutlined />}
+        type="primary"
+        tooltip="إضافة طالب جديد"
+        onClick={() => setIsAddDrawerVisible(true)}
       />
     </div>
   );

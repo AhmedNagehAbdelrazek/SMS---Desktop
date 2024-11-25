@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Table, Button } from 'antd';
 
-export default function StudentTable({ data, onRowClick, itemsPerPage = 10 }) {
+export default function StudentTable({ data, onRowClick, itemsPerPage = 10, additionalColumns=[] }) {
   const [currentPage, setCurrentPage] = useState(0);
 
   // Divide data into chunks
@@ -17,20 +17,32 @@ export default function StudentTable({ data, onRowClick, itemsPerPage = 10 }) {
       title: 'كود الطالب',
       dataIndex: 'id',
       key: 'id',
-      width: '20%',
+      width: '15%',
     },
     {
       title: 'الاسم',
       dataIndex: 'name',
       key: 'name',
-      width: '40%',
+      width: '35%',
     },
     {
       title: 'رقم الهاتف',
       dataIndex: 'phone_number',
       key: 'phone_number',
-      width: '40%',
+      width: '35%',
     },
+    {
+      title: 'الحالة',
+      dataIndex: 'blocked',
+      key: 'blocked',
+      width: '15%',
+      render: (blocked) => (
+        <span className={blocked ? 'text-red-500' : 'text-green-500'}>
+          {blocked ? 'محظور' : 'نشط'}
+        </span>
+      ),
+    },
+    ...additionalColumns
   ];
 
   const renderPageButtons = () => {
@@ -96,7 +108,7 @@ export default function StudentTable({ data, onRowClick, itemsPerPage = 10 }) {
           onRow={(record) => ({
             onClick: () => onRowClick(record),
           })}
-          rowClassName="cursor-pointer"
+          rowClassName={`cursor-pointer`}
         />
       </div>
       <div className="flex justify-center mt-4">

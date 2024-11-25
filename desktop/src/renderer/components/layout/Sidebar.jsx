@@ -6,7 +6,7 @@ import {
   SettingOutlined,
   SettingFilled,
   CameraFilled,
-  CameraOutlined
+  CameraOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -19,12 +19,14 @@ export default function Sidebar() {
 
   useEffect(() => {
     const path = location.pathname;
-    if (path === '/') {
+    if (path === '/' || path.match(/^\/\d+$/)) {
       setSelectedKeys(['home']);
     } else if (path.startsWith('/group')) {
       setSelectedKeys(['group']);
     } else if (path.startsWith('/settings')) {
       setSelectedKeys(['settings']);
+    } else if (path.startsWith('/attendance')) {
+      setSelectedKeys(['attendance']);
     }
   }, [location.pathname]);
 
@@ -67,7 +69,7 @@ export default function Sidebar() {
     <Sider
       dir="rtl"
       defaultCollapsed
-      className="fixed top-14 z-50 right-2 bottom-2 !w-14 !min-w-[auto] rounded-xl overflow-hidden !bg-macos-light-gray shadow-sm"
+      className="fixed top-14 z-[9999] right-2 bottom-2 !w-14 !min-w-[auto] rounded-xl overflow-hidden !bg-macos-light-gray shadow-sm"
     >
       <Menu
         mode="inline"
@@ -79,15 +81,21 @@ export default function Sidebar() {
         {menuItems.map((item) => (
           <Menu.Item
             key={item.key}
-            icon={<span className={`transition-all ${!item.link ? 'text-macos-light-gray' : '!text-macos-icon'} ${selectedKeys.includes(item.key) ? '!text-white' : ''}`}>{item.icon}</span>}
+            icon={
+              <span
+                className={`transition-all ${!item.link ? 'text-macos-light-gray' : '!text-macos-icon'} ${selectedKeys.includes(item.key) ? '!text-white' : ''}`}
+              >
+                {item.icon}
+              </span>
+            }
             onClick={() => item.link && navigate(item.link)}
             disabled={!item.link}
             className={`!text-macos-text transition-all ${
               selectedKeys.includes(item.key)
                 ? '!bg-macos-selected !text-white'
                 : item.link != null
-                ? 'hover:!bg-macos-hover'
-                : ''
+                  ? 'hover:!bg-macos-hover'
+                  : ''
             }`}
           >
             {item.label}
