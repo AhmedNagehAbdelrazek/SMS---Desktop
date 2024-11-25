@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { FloatButton, Button, Descriptions, Image, Badge, QRCode } from 'antd';
+import { FloatButton, Button, Descriptions, Image, Badge, QRCode, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useParams, Link } from 'react-router-dom';
 import { SearchBar } from '../components/Bars';
@@ -36,6 +36,7 @@ export default function Student() {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [groupDetails, setGroupDetails] = useState(null);
   const [confirmAction, setConfirmAction] = useState('');
+  const [groups, setGroups] = useState([]);
   const [isConfirmModalVisible, setIsConfirmModalVisible] = useState(false);
   const [isEditDrawerVisible, setIsEditDrawerVisible] = useState(false);
   const [isAddDrawerVisible, setIsAddDrawerVisible] = useState(false);
@@ -53,6 +54,15 @@ export default function Student() {
           searchStudent(id);
         });
     }
+
+    axios
+      .get(`http://localhost:65000/api/group`)
+      .then((response) => {
+        setGroups(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching groups:', error);
+      });
 
     getAllStudents();
   }, [id]);
@@ -378,7 +388,42 @@ export default function Student() {
         {
           key: '1',
           label: 'المجموعة',
-          children: 'لا يوجد مجموعة',
+          children: (
+            <div className='w-full flex gap-5'>
+              <Select
+                className='max-w-80 w-full'
+                value={selectedStudent?.groupId}
+                onSelect={group_id => {
+                  const formData = new FormData();
+                  formData.append('group_id', group_id);
+                  axios
+                    .patch(`http://localhost:65000/api/student/${selectedStudent.id}`, formData, {
+                      headers: {
+                        'Content-Type': 'multipart/form-data',
+                      },
+                    })
+                    .then(() => {
+                      addAlert('تم تحديث بيانات الطالب بنجاح', '', 'success', 3);
+                      setSelectedStudent({ ...selectedStudent, group_id });
+                      onClose();
+                    })
+                    .catch((error) => {
+                      console.error('Error updating student:', error);
+                      addAlert('حدث خطأ أثناء تحديث بيانات الطالب', '', 'error');
+                    });
+                  
+                }}
+                showSearch        
+                getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              >
+                {groups.map((group) => (
+                  <Select.Option key={group.id} value={group.id}>
+                    {group.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+          ),
         },
       ];
 

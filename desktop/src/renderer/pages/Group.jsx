@@ -9,6 +9,7 @@ import { EditStudentDrawer, AddNewGroupDrawer, EditGroupDrawer } from '../compon
 import { useAlert } from '../context/AlertContext';
 import copyToClipboard from '../utils/copyToClipboard';
 import { Line } from 'react-chartjs-2';
+import moment from 'moment';
 import {
   Chart as ChartJS,
   LineElement,
@@ -27,6 +28,16 @@ ChartJS.register(
   CategoryScale,
   Tooltip,
 );
+
+const dayOfWeekMapping = {
+  '1': 'السبت',
+  '2': 'الأحد',
+  '3': 'الإثنين',
+  '4': 'الثلاثاء',
+  '5': 'الأربعاء',
+  '6': 'الخميس',
+  '7': 'الجمعة',
+};
 
 export default function Group() {
   const { id } = useParams();
@@ -97,12 +108,12 @@ export default function Group() {
         {
           key: '4',
           label: 'اليوم',
-          children: selectedGroup?.day_of_week,
+          children: dayOfWeekMapping[selectedGroup?.day_of_week],
         },
         {
           key: '5',
           label: 'الوقت',
-          children: selectedGroup?.time_of_day,
+          children: moment(selectedGroup.time_of_day, 'HH:mm:ss').format('HH:mm a'),
         },
       ]);
     }

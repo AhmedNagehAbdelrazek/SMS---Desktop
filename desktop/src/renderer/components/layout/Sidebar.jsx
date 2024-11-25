@@ -51,7 +51,7 @@ export default function Sidebar() {
         <CameraOutlined />
       ),
       label: 'تسجيل الحضور',
-      link: null, // No link, so it will be disabled
+      link: '/attendance',
     },
     {
       key: 'settings',
