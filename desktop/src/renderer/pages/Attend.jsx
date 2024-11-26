@@ -23,7 +23,6 @@ export default function Attend() {
     }
   }, [qrCodeResult]);
 
-
   useEffect(() => {
     const video = qrReaderRef.current?.video?.getVideoTracks
       ? qrReaderRef.current?.video

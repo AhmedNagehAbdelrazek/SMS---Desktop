@@ -89,23 +89,6 @@ export default function Group() {
           ),
         },
         {
-          key: '2',
-          label: 'رقم المجموعة',
-          children: (
-            <span
-              className="cursor-pointer hover:underline"
-              onClick={() => copyToClipboard(selectedGroup?.id, addAlert)}
-            >
-              {selectedGroup?.id}
-            </span>
-          ),
-        },
-        {
-          key: '3',
-          label: 'عدد المحاضرات',
-          children: selectedGroup?.last_lecture_number,
-        },
-        {
           key: '4',
           label: 'اليوم',
           children: dayOfWeekMapping[selectedGroup?.day_of_week],
@@ -258,7 +241,27 @@ export default function Group() {
         <SearchBar onSearch={handleSearch} />
       </div>
 
-      <StudentTable data={filteredStudents} onRowClick={handleRowClick} />
+      <StudentTable 
+        data={filteredStudents}
+        onRowClick={handleRowClick}
+        additionalColumns={
+          [
+            {
+              title: 'الحضور',
+              dataIndex: 'attendance',
+              key: 'attendance',
+              width: '10%',
+              render: (attendance) => {
+                console.log(attendance);
+                
+                return (
+                  <span className={`w-2 aspect-square inline-block rounded-full ${attendance   ? 'bg-green-500' : 'bg-red-500'}`} />
+                )
+              },
+            }
+          ]
+        }
+      />
 
       {selectedGroup && (
         <div className="mt-4 p-4 bg-white rounded-xl">

@@ -31,18 +31,16 @@ export default function StudentTable({ data, onRowClick, itemsPerPage = 10, addi
       key: 'phone_number',
       width: '35%',
     },
+    ...additionalColumns,
     {
-      title: 'الحالة',
+      title: '',
       dataIndex: 'blocked',
       key: 'blocked',
-      width: '15%',
+      width: '1%',
       render: (blocked) => (
-        <span className={blocked ? 'text-red-500' : 'text-green-500'}>
-          {blocked ? 'محظور' : 'نشط'}
-        </span>
+        <span className={`w-2 aspect-square inline-block rounded-full ${blocked ? 'bg-black' : 'bg-white border'}`} />
       ),
     },
-    ...additionalColumns
   ];
 
   const renderPageButtons = () => {

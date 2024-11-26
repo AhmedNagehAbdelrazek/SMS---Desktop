@@ -93,17 +93,17 @@ export default function Student() {
 
     axios
       .get(
-        `http://localhost:65000/api/student/search/students?search=${searchText}`,
+        `http://localhost:65000/api/student?search=${searchText}`,
       )
       .then((response) => {
-        const data = response.data.map((student) => ({
+        const data = response.data.students.map((student) => ({
           key: student.id,
           ...student,
         }));
         setFilteredData(data);
       })
       .catch((error) => {
-        if (error.response.status === 404) {
+        if (error.response?.status === 404) {
           addAlert('لا يوجد طلاب يطابقون البحث', '', 'warning', 3);
           setFilteredData([]);
         }
@@ -355,23 +355,6 @@ export default function Student() {
               {groupDetails.name}
             </Link>
           ),
-        },
-        {
-          key: '2',
-          label: 'رقم المجموعة',
-          children: (
-            <Link
-              to={`/group/${groupDetails.id}`}
-              className="cursor-pointer hover:underline"
-            >
-              {groupDetails.id}
-            </Link>
-          ),
-        },
-        {
-          key: '3',
-          label: 'عدد المحاضرات',
-          children: groupDetails.last_lecture_number,
         },
         {
           key: '4',
