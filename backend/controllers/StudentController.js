@@ -208,7 +208,7 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
       });
       // Add attendance filter if provided
     let studentAttendance = [];
-    if (attended) {
+    if (attended == "true") {
       studentAttendance = await Promise.all(
         students.map(async (student) => {
           const studentId = student.id;
@@ -220,19 +220,44 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
             order: [["createdAt", "DESC"]],
           });
           if (hasAttended) {
-            return {
-              ...student.toJSON(),
-              hasAttended: true,
-            };
+            return student
           } else {
-            return {
-              ...student.toJSON(),
-              hasAttended: false,
-            };
+            return null
           }
         })
       );
+    }else if( attended == "false") {
+        studentAttendance = await Promise.all(
+            students.map(async (student) => {
+              const studentId = student.id;
+      
+              let hasAttended = false;
+              if (student.group_id) {
+                  let lastLectureId = await getLastLectureId(student.group_id);
+                  hasAttended = await Attendance.findOne({
+                    where: {
+                      student_id: studentId,
+                      lecture_id: lastLectureId,
+                      isDeleted: false,
+                    },
+                    order: [["createdAt", "DESC"]],
+                  });
+              }else{
+                  studentAttendance = students;
+              }
+              
+              if (hasAttended) {
+                return null
+              } else {
+                return student
+              }
+            })
+          );
+      }
+    else{
+        studentAttendance = students;
     }
+      studentAttendance = studentAttendance.filter((student) => student !== null);
 
       return res.status(200).json(studentAttendance);
     }
@@ -260,7 +285,7 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
 
     // Add attendance filter if provided
   let studentAttendance = [];
-  if (attended) {
+  if (attended == "true") {
     studentAttendance = await Promise.all(
       students.map(async (student) => {
         const studentId = student.id;
@@ -276,6 +301,8 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
               },
               order: [["createdAt", "DESC"]],
             });
+        }else{
+            studentAttendance = students;
         }
         
         if (hasAttended) {
@@ -285,10 +312,39 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
         }
       })
     );
+  }else if( attended == "false") {
+    studentAttendance = await Promise.all(
+        students.map(async (student) => {
+          const studentId = student.id;
+  
+          let hasAttended = false;
+          if (student.group_id) {
+              let lastLectureId = await getLastLectureId(student.group_id);
+              hasAttended = await Attendance.findOne({
+                where: {
+                  student_id: studentId,
+                  lecture_id: lastLectureId,
+                  isDeleted: false,
+                },
+                order: [["createdAt", "DESC"]],
+              });
+          }else{
+              studentAttendance = students;
+          }
+          
+          if (hasAttended) {
+            return null
+          } else {
+            return student
+          }
+        })
+      );
+  }else{
+      studentAttendance = students
   }
     // remove the null from the array
     studentAttendance = studentAttendance.filter((student) => student !== null);
-    
+
     // Send the paginated response
     return res.status(200).json({
       currentPage: parseInt(page),
