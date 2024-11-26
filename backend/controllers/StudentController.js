@@ -79,7 +79,11 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
                 { isDeleted: false },
                 { isDeleted: deleted == "true" ? true : false }
             ]
-        }});
+        },include:[{
+            model: Group,
+            attributes: ['name',"id"]
+        }]
+    });
         return res.status(200).json(students);
     }
 
@@ -96,11 +100,15 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
                         { name: { [Op.like]: `%${search}%` } },
                         { phone_number: { [Op.like]: `%${search}%` } }, // Correct column name
                         { id: { [Op.like]: `%${search}%` } },
+                    ],
+                    [Op.and]:[
                         { isDeleted: false },
                         { isDeleted: deleted == "true" ? true : false }
-                    ],
-                    
-                },
+                    ]
+                },include:[{
+                    model: Group,
+                    attributes: ['name',"id"]
+                }]
             });
         }else{
             students = await Student.findAll({
@@ -111,7 +119,10 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
                         { isDeleted: false },
                         { isDeleted: deleted == "true" ? true : false }
                     ]
-                }
+                },include:[{
+                    model: Group,
+                    attributes: ['name',"id"]
+                }]
             });
         }
 
@@ -197,7 +208,7 @@ exports.deleteStudent = asyncHandler(async (req, res) => {
         return res.status(404).json({ message: 'Student not found' });
     }
 
-    await student.destroy();
+    await student.update({ isDeleted: true });
     return res.status(200).json({ message: 'Student deleted successfully' });
 });
 

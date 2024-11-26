@@ -38,14 +38,47 @@ Student.init(
     parent_phone_1: {
       type: DataTypes.NUMBER,
       allowNull: true,
+      validate:{
+        validatePhoneNumber(value){
+          if(!value.startsWith("01")){
+            throw new Error("phone number has to start with 01");
+          }
+          if(value.length != 11){
+            throw new Error("phone number has to be 11 number");
+          }
+        },
+
+      }
     },
     parent_phone_2: {
       type: DataTypes.NUMBER,
       allowNull: true,
+      validate:{
+        validatePhoneNumber(value){
+          if(!value.startsWith("01")){
+            throw new Error("phone number has to start with 01");
+          }
+          if(value.length != 11){
+            throw new Error("phone number has to be 11 number");
+          }
+        },
+
+      }
     },
     parent_phone_3: {
       type: DataTypes.NUMBER,
       allowNull: true,
+      validate:{
+        validatePhoneNumber(value){
+          if(!value.startsWith("01")){
+            throw new Error("phone number has to start with 01");
+          }
+          if(value.length != 11){
+            throw new Error("phone number has to be 11 number");
+          }
+        },
+
+      }
     },
     avatar: {
       type: DataTypes.STRING,
