@@ -279,20 +279,16 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
         }
         
         if (hasAttended) {
-          return {
-            ...student.toJSON(),
-            hasAttended: true,
-          };
+          return student
         } else {
-          return {
-            ...student.toJSON(),
-            hasAttended: false,
-          };
+          return null
         }
       })
     );
   }
-
+    // remove the null from the array
+    studentAttendance = studentAttendance.filter((student) => student !== null);
+    
     // Send the paginated response
     return res.status(200).json({
       currentPage: parseInt(page),
