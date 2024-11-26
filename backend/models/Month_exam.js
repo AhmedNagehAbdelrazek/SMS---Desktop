@@ -13,6 +13,7 @@ Month_Exam.init(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true
     },
     group_id: {
       type: DataTypes.INTEGER,
@@ -21,6 +22,11 @@ Month_Exam.init(
         key: 'id',
       },
       onDelete: 'CASCADE',
+    },
+    fullmark:{
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue:100
     },
     date: {
       type: DataTypes.DATE,

@@ -40,6 +40,9 @@ Student.init(
       allowNull: true,
       validate:{
         validatePhoneNumber(value){
+          if(!value){
+            return true;
+          }
           if(!value.startsWith("01")){
             throw new Error("phone number has to start with 01");
           }
@@ -55,6 +58,9 @@ Student.init(
       allowNull: true,
       validate:{
         validatePhoneNumber(value){
+          if(!value){
+            return true;
+          }
           if(!value.startsWith("01")){
             throw new Error("phone number has to start with 01");
           }
@@ -70,6 +76,9 @@ Student.init(
       allowNull: true,
       validate:{
         validatePhoneNumber(value){
+          if(!value){
+            return true;
+          }
           if(!value.startsWith("01")){
             throw new Error("phone number has to start with 01");
           }

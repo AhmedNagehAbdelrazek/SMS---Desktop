@@ -11,8 +11,9 @@ exports.attend = asyncHandler(async (req, res) => {
     }
 
     //TODO check if student has already attended and wants to attend to another group send a different message
-    
-    const lectureId = await getLastLectureId(groupId || student.group_id);
+    let gId = groupId || student.group_id;
+    console.log(gId);
+    const lectureId = await getLastLectureId(gId);
 
     const hasAttended = await Attendance.findOne({ where: { student_id: studentId , isDeleted:false} });
     if(hasAttended && groupId && student.group_id != groupId) {

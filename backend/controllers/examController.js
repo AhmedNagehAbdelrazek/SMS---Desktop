@@ -58,19 +58,38 @@ exports.getMonthExamFullReport = expressAsyncHandler(async (req, res) => {
     const allStudents = await Student.findAll({
         where: { group_id: groupId, isDeleted: false },
     });
-    const studentsAttendedExam = allStudents.filter(student => studentsAttended.includes(student.id));
 
-    const notAttendedStudents = allStudents.filter(student => !studentsAttendedExam.includes(student.id));
+    let studentsAttendedExam = allStudents.filter(student => studentsAttended.includes(parseInt(student.id)));
+    studentsAttendedExam = studentsAttendedExam.map(student => ({...student.toJSON(), isAttended:true , grade: exams.find(exam=>exam.student_id == student.id)?.grade}));
+    let studentsAttendedExamIds = studentsAttendedExam.map(s=> s.id);
 
+
+    let notAttendedStudents = allStudents.filter(student => !studentsAttendedExamIds.includes(student.id));
+    notAttendedStudents = notAttendedStudents.map(student => ({...student.toJSON(), isAttended:false ,grade:null}));
+    
     const result = {
-        exams,
+        name:examExist.name,
+        fullmark:examExist.fullmark,
         totalSuccessededStudents: exams.filter(exam => exam.grade >= 50).length,
         totalFailedStudents: exams.filter(exam => exam.grade < 50).length,
         totalStudents: exams.length,
         averageGrade: exams.reduce((total, exam) => total + exam.grade, 0) / exams.length,
-        attened: studentsAttendedExam,
-        notAttended: notAttendedStudents,
+        students: [...studentsAttendedExam,...notAttendedStudents]
     }
     res.status(200).json(result);
 
+});
+
+exports.deletemonthExam = expressAsyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    const monthExam = await Month_Exam.findByPk(id);
+
+    if (!monthExam) {
+        // throw {message:'Student not found'}
+        return res.status(404).json({ message: 'Month Exam not found' });
+    }
+
+    await monthExam.update({ isDeleted: true });
+    return res.status(200).json({ message: 'Month Exam deleted successfully' });
 });

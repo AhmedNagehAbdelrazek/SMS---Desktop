@@ -348,7 +348,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:65000/api/student?page=1&limit=2",
+							"raw": "http://localhost:65000/api/student?limit=999999&search=&deleted=true",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -361,16 +361,25 @@
 							"query": [
 								{
 									"key": "page",
-									"value": "1"
+									"value": "1",
+									"disabled": true
 								},
 								{
 									"key": "limit",
-									"value": "2"
+									"value": "999999"
 								},
 								{
 									"key": "all",
 									"value": "true",
 									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": ""
+								},
+								{
+									"key": "deleted",
+									"value": "true"
 								}
 							]
 						}
@@ -918,6 +927,151 @@
 							"body": "{\n    \"message\": \"Student deleted successfully\"\n}"
 						}
 					]
+				},
+				{
+					"name": "Get Student Full Report",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:65000/api/student/analysis/report/00000001",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "65000",
+							"path": [
+								"api",
+								"student",
+								"analysis",
+								"report",
+								"00000001"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:65000/api/student/analysis/report/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "65000",
+									"path": [
+										"api",
+										"student",
+										"analysis",
+										"report",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "378"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"17a-/BpirCvcXsgzjY8oGl566ztf0Nc\""
+								},
+								{
+									"key": "Date",
+									"value": "Tue, 26 Nov 2024 06:23:45 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"studentId\": \"1\",\n    \"overallLectureGrade\": \"40.00\",\n    \"overallHomeworkGrade\": \"10.00\",\n    \"overallMonthGrade\": \"88.00\",\n    \"lecturesReport\": [\n        {\n            \"id\": 1,\n            \"name\": \"Lecture 1\",\n            \"lecture_number\": 1,\n            \"group\": {\n                \"id\": 1,\n                \"name\": \"sunday_elfara\"\n            },\n            \"attended\": true,\n            \"isCompensatory\": false,\n            \"homeworkType\": 10,\n            \"lectureGrade\": 40\n        }\n    ],\n    \"monthExamReport\": [\n        {\n            \"id\": 1,\n            \"name\": \"month-1\",\n            \"date\": \"2024-11-09T18:30:04.625Z\",\n            \"grade\": 88\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get all Students filtered",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:65000/api/student?limit=20&attended=true",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "65000",
+							"path": [
+								"api",
+								"student"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "attended",
+									"value": "true"
+								},
+								{
+									"key": "sortBy",
+									"value": "name",
+									"disabled": true
+								},
+								{
+									"key": "sortOrder",
+									"value": "DESC",
+									"disabled": true
+								},
+								{
+									"key": "blocked",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "deleted",
+									"value": "false",
+									"disabled": true
+								},
+								{
+									"key": "all",
+									"value": "true",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1678,6 +1832,89 @@
 							"body": "{\n    \"message\": \"Group deleted successfully\"\n}"
 						}
 					]
+				},
+				{
+					"name": "Get Groups ordered by today",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:65000/api/group/ordered/today",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "65000",
+							"path": [
+								"api",
+								"group",
+								"ordered",
+								"today"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:65000/api/group/ordered/today",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "65000",
+									"path": [
+										"api",
+										"group",
+										"ordered",
+										"today"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "762"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"2fa-Sat3R/GJTmp3ZwJxeTOhKLx8Yp0\""
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 24 Nov 2024 23:44:25 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    {\n        \"day\": \"Monday\",\n        \"groups\": [\n            {\n                \"id\": 7,\n                \"name\": \"sunday_elfaraoe2r\",\n                \"start_time\": \"4:00 PM\",\n                \"end_time\": \"6:00 PM\"\n            }\n        ]\n    },\n    {\n        \"day\": \"Tuesday\",\n        \"groups\": []\n    },\n    {\n        \"day\": \"Wednesday\",\n        \"groups\": []\n    },\n    {\n        \"day\": \"Thursday\",\n        \"groups\": []\n    },\n    {\n        \"day\": \"Friday\",\n        \"groups\": []\n    },\n    {\n        \"day\": \"Saturday\",\n        \"groups\": [\n            {\n                \"id\": 6,\n                \"name\": \"sunday_elfaraoe7r\",\n                \"start_time\": \"4:00 PM\",\n                \"end_time\": \"6:00 PM\"\n            }\n        ]\n    },\n    {\n        \"day\": \"Sunday\",\n        \"groups\": [\n            {\n                \"id\": 1,\n                \"name\": \"sunday_elfara\",\n                \"start_time\": \"10:00 AM\",\n                \"end_time\": \"12:00 PM\"\n            },\n            {\n                \"id\": 2,\n                \"name\": \"sunday_elfarao\",\n                \"start_time\": \"11:00 AM\",\n                \"end_time\": \"1:00 PM\"\n            },\n            {\n                \"id\": 3,\n                \"name\": \"sunday_elfaraor\",\n                \"start_time\": \"2:00 PM\",\n                \"end_time\": \"4:00 PM\"\n            },\n            {\n                \"id\": 4,\n                \"name\": \"sunday_elfaraoer\",\n                \"start_time\": \"2:00 PM\",\n                \"end_time\": \"4:00 PM\"\n            },\n            {\n                \"id\": 5,\n                \"name\": \"sunday_elfaraoe1r\",\n                \"start_time\": \"4:00 PM\",\n                \"end_time\": \"6:00 PM\"\n            }\n        ]\n    }\n]"
+						}
+					]
 				}
 			]
 		},
@@ -1756,7 +1993,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"studentId\":5,\r\n    \"groupId\":1,\r\n    \"homework\":\"finish\"\r\n}",
+							"raw": "{\r\n    \"studentId\":1,\r\n    \"homework\":\"finish\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2632,7 +2869,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"date\":\"2024-11-09T18:30:04.625Z\",\r\n    \"groupId\":1,\r\n    \"name\":\"month-1\"\r\n}",
+							"raw": "{\r\n    \"date\":\"2024-11-09T18:30:04.625Z\",\r\n    \"groupId\":1,\r\n    \"name\":\"month-1\",\r\n    \"fullmark\":100\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -3271,7 +3508,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"studentId\":5,\r\n    \"grade\":40,\r\n    \"groupId\":1\r\n}",
+							"raw": "{\r\n    \"studentId\":5,\r\n    \"grade\":40,\r\n    \"groupId\":1,\r\n    \"lectureId\":1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

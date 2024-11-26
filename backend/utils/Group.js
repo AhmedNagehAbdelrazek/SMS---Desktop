@@ -15,8 +15,9 @@ exports.getLastLectureId = async (group_id) => {
     const newLecture = await Lecture.create({ group_id, lecture_number: 1, name: `Lecture 1` });
     return newLecture.id;
   }
-
-  const lastTimeupdated = new Date(lastLecture.createdAt);
+  console.log(lastLecture);
+  
+  const lastTimeupdated = new Date(lastLecture?.createdAt);
 
   // after at least 7 days since last update, we can fetch new lecture number
   if (lastTimeupdated < new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)) {

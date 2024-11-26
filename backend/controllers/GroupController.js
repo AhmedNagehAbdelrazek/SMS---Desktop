@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const Group = require("../models/Group");
 const { days } = require("../config/consts");
 const { Attendance } = require("../models");
+const { getLastLectureId } = require("../utils/Group");
 
 // Get all groups
 exports.getGroups = asyncHandler(async (req, res) => {
@@ -52,21 +53,27 @@ exports.getAllGroupStudents = asyncHandler(async (req, res) => {
     if (!group) {
         return res.status(404).json({ message: "Group not found" });
     }
-    let students = await group.getStudents();
+    let students = await group.getStudents({
+        where: {
+            isDeleted: false,
+        },
+    });
 
+    let lastLectureId = await getLastLectureId(groupId);
+    
     let studentsWithAttendance = await Promise.all(
         students.map(async (student) => {
-            let attendance = await Attendance.findAll({
-                where: {
+            let hasattendceded = await Attendance.findOne({
+                where:{
                     student_id: student.id,
+                    lecture_id:lastLectureId,
                     isDeleted: false,
-                },
+                }
             });
-            // return the student and the attendance in the same object 
             return {
                 // add all student values
                 ...student.toJSON(),
-                attendance,
+                attendance:hasattendceded?true:false,
             };
         })
     )
