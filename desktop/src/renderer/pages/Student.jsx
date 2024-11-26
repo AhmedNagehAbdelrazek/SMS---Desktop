@@ -1,6 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { FloatButton, Button, Descriptions, Image, Badge, QRCode, Select } from 'antd';
+import {
+  FloatButton,
+  Button,
+  Descriptions,
+  Image,
+  Badge,
+  QRCode,
+  Select,
+} from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useParams, Link } from 'react-router-dom';
 import { SearchBar } from '../components/Bars';
@@ -92,9 +100,7 @@ export default function Student() {
     }
 
     axios
-      .get(
-        `http://localhost:65000/api/student?search=${searchText}`,
-      )
+      .get(`http://localhost:65000/api/student?search=${searchText}`)
       .then((response) => {
         const data = response.data.students.map((student) => ({
           key: student.id,
@@ -228,10 +234,13 @@ export default function Student() {
     datasets: [
       {
         label: 'Degrees',
-        data: [65, 59, 80, 81, 56, 55, 40, 70, 81, 56, 55, 40, 81, 56, 55, 40, 70, 81, 56, 55, 40, 70, 81, 56, 55, 40, 70, 81, 56, 55, 40],
+        data: [
+          65, 59, 80, 81, 56, 55, 40, 70, 81, 56, 55, 40, 81, 56, 55, 40, 70,
+          81, 56, 55, 40, 70, 81, 56, 55, 40, 70, 81, 56, 55, 40,
+        ],
         borderColor: 'rgba(153, 102, 255, 1)',
         backgroundColor: 'rgba(153, 102, 255, 0.2)',
-        tension: .3,
+        tension: 0.3,
         pointRadius: 5,
         pointHoverRadius: 7,
       },
@@ -372,31 +381,43 @@ export default function Student() {
           key: '1',
           label: 'المجموعة',
           children: (
-            <div className='w-full flex gap-5'>
+            <div className="w-full flex gap-5">
               <Select
-                className='max-w-80 w-full'
+                className="max-w-80 w-full"
                 value={selectedStudent?.groupId}
-                onSelect={group_id => {
+                onSelect={(group_id) => {
                   const formData = new FormData();
                   formData.append('group_id', group_id);
                   axios
-                    .patch(`http://localhost:65000/api/student/${selectedStudent.id}`, formData, {
-                      headers: {
-                        'Content-Type': 'multipart/form-data',
+                    .patch(
+                      `http://localhost:65000/api/student/${selectedStudent.id}`,
+                      formData,
+                      {
+                        headers: {
+                          'Content-Type': 'multipart/form-data',
+                        },
                       },
-                    })
+                    )
                     .then(() => {
-                      addAlert('تم تحديث بيانات الطالب بنجاح', '', 'success', 3);
+                      addAlert(
+                        'تم تحديث بيانات الطالب بنجاح',
+                        '',
+                        'success',
+                        3,
+                      );
                       setSelectedStudent({ ...selectedStudent, group_id });
                       onClose();
                     })
                     .catch((error) => {
                       console.error('Error updating student:', error);
-                      addAlert('حدث خطأ أثناء تحديث بيانات الطالب', '', 'error');
+                      addAlert(
+                        'حدث خطأ أثناء تحديث بيانات الطالب',
+                        '',
+                        'error',
+                      );
                     });
-                  
                 }}
-                showSearch        
+                showSearch
                 getPopupContainer={(triggerNode) => triggerNode.parentNode}
               >
                 {groups.map((group) => (
@@ -410,14 +431,34 @@ export default function Student() {
         },
       ];
 
+      const onFilter = ({
+        searchText,
+        sortField,
+        isReverse,
+        isBlocked,
+        isNotBlocked,
+        isAttend,
+        isAbsent,
+      }) => {
+        console.log(
+            searchText,
+            sortField,
+            isReverse,
+            isBlocked,
+            isNotBlocked,
+            isAttend,
+            isAbsent,
+        );
+      };
+
   return (
     <div
       lang="ar"
       dir="rtl"
       className="w-full min-h-full p-4 bg-macos-light-gray text-macos-text font-sans"
     >
-      <div className='mb-4'>
-        <SearchBar onSearch={handleSearch} />
+      <div className="mb-4">
+        <SearchBar onFilter={onFilter} />
       </div>
 
       <StudentTable data={filteredData} onRowClick={handleRowClick} />

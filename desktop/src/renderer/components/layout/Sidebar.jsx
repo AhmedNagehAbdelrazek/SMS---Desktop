@@ -7,6 +7,7 @@ import {
   SettingFilled,
   CameraFilled,
   CameraOutlined,
+  PaperClipOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -52,6 +53,12 @@ export default function Sidebar() {
       ),
       label: 'تسجيل الحضور',
       link: '/attendance',
+    },
+    {
+      key: 'exam',
+      icon: <PaperClipOutlined />,
+      label: 'إدارة الامتحانات',
+      link: '/exam',
     },
     {
       key: 'settings',

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { CameraOutlined } from '@ant-design/icons';
 import { Button, Descriptions, Image, Badge, Select, Slider, Input, Switch } from 'antd';
 import { useAlert } from '../context/AlertContext';
 import { QrReader } from 'react-qr-reader';
@@ -160,8 +161,8 @@ export default function Attend() {
       <h2 className="text-2xl font-bold mb-4">تسجيل الحضور</h2>
       <div className="flex justify-between">
         <div className="flex flex-col items-end">
-          <div className="relative w-60 h-60 rounded-xl overflow-hidden">
-            {isScanning && (
+          <div className="relative flex justify-center items-center bg-gray-400 w-60 h-60 rounded-xl overflow-hidden">
+            {isScanning ? (
               <QrReader
                 delay={700}
                 ref={qrReaderRef}
@@ -169,7 +170,7 @@ export default function Attend() {
                   if (!!result) {
                     handleScan(result?.text);
                   }
-
+                  3
                   if (!!error) {
                     handleError(error);
                   }
@@ -179,7 +180,7 @@ export default function Attend() {
                 }}
                 constraints={{ deviceId: selectedDevice }}
               />
-            )}
+            ) : <CameraOutlined className='text-7xl' />}
           </div>
           <Select
             className="mt-2"

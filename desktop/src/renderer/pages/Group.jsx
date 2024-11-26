@@ -215,6 +215,26 @@ export default function Group() {
     ],
   };
 
+  const onFilter = ({
+    searchText,
+    sortField,
+    isReverse,
+    isBlocked,
+    isNotBlocked,
+    isAttend,
+    isAbsent,
+  }) => {
+    console.log(
+        searchText,
+        sortField,
+        isReverse,
+        isBlocked,
+        isNotBlocked,
+        isAttend,
+        isAbsent,
+    );
+  };
+
   return (
     <div
       lang="ar"
@@ -238,7 +258,7 @@ export default function Group() {
       </div>
 
       <div className="mb-4">
-        <SearchBar onSearch={handleSearch} />
+      <SearchBar onFilter={onFilter} />
       </div>
 
       <StudentTable 
