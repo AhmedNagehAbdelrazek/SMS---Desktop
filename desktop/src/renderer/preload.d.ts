@@ -4,7 +4,14 @@ declare global {
   // eslint-disable-next-line no-unused-vars
   interface Window {
     electron: ElectronHandler;
+    api: unknown;
+    myGlobal: Record<string, unknown>;
+    electronAPI: {
+      send: (channel: string, data: unknown) => void;
+      receive: (channel: string, callback: (data: unknown) => void) => void;
+    }
   }
 }
+
 
 export {};

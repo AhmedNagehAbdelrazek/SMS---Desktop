@@ -39,6 +39,24 @@ const configuration: webpack.Configuration = {
   module: {
     rules: [
       {
+        test: /\.css$/,
+        use: [
+          'style-loader', // Injects CSS into the DOM
+          'css-loader',   // Resolves CSS imports
+          {
+            loader: 'postcss-loader', // Processes CSS with PostCSS
+            options: {
+              postcssOptions: {
+                plugins: [
+                  require('tailwindcss'),
+                  require('autoprefixer'),
+                ],
+              },
+            },
+          },
+        ],
+      },
+      {
         test: /\.s?(a|c)ss$/,
         use: [
           MiniCssExtractPlugin.loader,

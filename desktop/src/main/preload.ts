@@ -2,6 +2,7 @@
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
+(window as any).global = window;
 export type Channels = 'ipc-example';
 
 const electronHandler = {
@@ -24,6 +25,29 @@ const electronHandler = {
   },
 };
 
+contextBridge.exposeInMainWorld('electronAPI', {
+  send: (channel: string, data: unknown) => {
+    ipcRenderer.send(channel, data);
+  },
+  receive: (channel: string, callback: (data: unknown[]) => void) => {
+    ipcRenderer.on(channel, (_ : IpcRendererEvent, ...args: unknown[] ) => callback(...args));
+  },
+});
+
 contextBridge.exposeInMainWorld('electron', electronHandler);
 
+window.api = {
+  minimizeWindow: () => ipcRenderer.send('window:minimize'),
+  toggleFullscreen: () => ipcRenderer.send('window:toggle-fullscreen'),
+  closeWindow: () => ipcRenderer.send('window:close'),
+};
+
+contextBridge.exposeInMainWorld('api', {
+  minimizeWindow: () => ipcRenderer.send('window:minimize'),
+  toggleFullscreen: () => ipcRenderer.send('window:toggle-fullscreen'),
+  closeWindow: () => ipcRenderer.send('window:close'),
+});
+
+
+console.log('Preload script loaded.');
 export type ElectronHandler = typeof electronHandler;

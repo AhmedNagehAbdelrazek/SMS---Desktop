@@ -1,16 +1,17 @@
-import { ipcRenderer } from 'electron';
 
 export default function CustomHeader() {
   const handleMinimize = () => {
-    ipcRenderer.send('window:minimize');
+    window.api?.minimizeWindow();
+    console.log(window.api);
+    console.log("minim");
   };
 
   const handleToggleFullscreen = () => {
-    ipcRenderer.send('window:toggle-fullscreen');
+    window.api?.toggleFullscreen();
   };
 
   const handleClose = () => {
-    ipcRenderer.send('window:close');
+    window.api?.closeWindow();
   };
 
   return (

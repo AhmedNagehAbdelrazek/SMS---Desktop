@@ -38,7 +38,9 @@ export default function AddNewStudentDrawer({ visible, onClose }) {
       .then((values) => {
         const formData = new FormData();
         Object.keys(values).forEach((key) => {
-          formData.append(key, values[key]);
+          if( values[key] != undefined) {
+            formData.append(key, values[key]);
+          }
         });
         if (fileList.length > 0) {
           formData.append('avatar', fileList[0].originFileObj);

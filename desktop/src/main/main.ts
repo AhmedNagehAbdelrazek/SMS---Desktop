@@ -82,7 +82,7 @@ const createWindow = async () => {
     ? path.join(process.resourcesPath, 'assets')
     : path.join(__dirname, '../../assets');
 
-  const getAssetPath = (...paths) => path.join(RESOURCES_PATH, ...paths);
+  const getAssetPath = (...paths :any) => path.join(RESOURCES_PATH, ...paths);
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -97,9 +97,7 @@ const createWindow = async () => {
       nodeIntegration: true,
       contextIsolation: false,
       sandbox: false,
-      preload: app.isPackaged
-        ? path.join(__dirname, 'preload.js')
-        : path.join(__dirname, '../../.erb/dll/preload.js'),
+      preload: path.join(__dirname, 'preload.js')
     },
   });
 
@@ -110,7 +108,7 @@ const createWindow = async () => {
     if (process.env.START_MINIMIZED) mainWindow.minimize();
     else mainWindow.show();
   });
-
+  
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -124,7 +122,7 @@ const createWindow = async () => {
 };
 
 // Server management
-const serverPath = path.join(process.resourcesPath, 'resources', 'server', 'server-win.exe');
+const serverPath = path.join(process.cwd(), 'resources', 'server', 'server-win.exe');
 let serverProcess;
 
 const startServerIfNotRunning = () => {

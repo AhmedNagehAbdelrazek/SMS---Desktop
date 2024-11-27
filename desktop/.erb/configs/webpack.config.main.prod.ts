@@ -78,6 +78,11 @@ const configuration: webpack.Configuration = {
     __dirname: false,
     __filename: false,
   },
+  externals: {
+    'fs': 'commonjs fs',
+    'path': 'commonjs path',
+    'electron': 'commonjs electron',
+  },
 };
 
 export default merge(baseConfig, configuration);

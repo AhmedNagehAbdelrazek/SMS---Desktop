@@ -7,6 +7,8 @@ import { store } from './shared/RTK/store';
 const container = document.getElementById('root') as HTMLElement;
 const root = createRoot(container);
 
+(window as any).global = window;
+
 root.render(
   <ConfigProvider
     theme={{
