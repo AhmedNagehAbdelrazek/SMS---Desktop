@@ -238,17 +238,12 @@
       "./assets/**",
       {
         "from": "resources/",
-        "to": "resources/",
+        "to": "/",
         "filter": [
           "**/*"
         ]
       }
-    ],
-    "publish": {
-      "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
-    }
+    ]
   },
   "devEngines": {
     "node": ">=14.x",
