@@ -36,75 +36,30 @@ const configuration: webpack.Configuration = {
     },
   },
 
+  
   module: {
     rules: [
       {
-        test: /\.css$/,
+        test: /\.css$/, // Match only .css files
+        exclude: /node_modules/, // Exclude node_modules
         use: [
-          'style-loader', // Injects CSS into the DOM
-          'css-loader',   // Resolves CSS imports
-          {
-            loader: 'postcss-loader', // Processes CSS with PostCSS
-            options: {
-              postcssOptions: {
-                plugins: [
-                  require('tailwindcss'),
-                  require('autoprefixer'),
-                ],
-              },
-            },
-          },
+          'style-loader',    // Inject styles into DOM
+          'css-loader',      // Interpret @import and url()
+          'postcss-loader',  // Process Tailwind and PostCSS plugins
         ],
       },
       {
-        test: /\.s?(a|c)ss$/,
+        test: /\.s[ac]ss$/, // Match .scss or .sass files
         use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              sourceMap: true,
-              importLoaders: 1,
-            },
-          },
-          'sass-loader',
+          'style-loader',    // Inject styles into DOM
+          'css-loader',      // Interpret @import and url()
+          'postcss-loader',  // Process PostCSS plugins
+          'sass-loader',     // Compile Sass to CSS
         ],
-        include: /\.module\.s?(c|a)ss$/,
       },
       {
-        test: /\.s?(a|c)ss$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
-        exclude: /\.module\.s?(c|a)ss$/,
-      },
-      // Fonts
-      {
-        test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        type: 'asset/resource',
-      },
-      // Images
-      {
-        test: /\.(png|jpg|jpeg|gif)$/i,
-        type: 'asset/resource',
-      },
-      // SVG
-      {
-        test: /\.svg$/,
-        use: [
-          {
-            loader: '@svgr/webpack',
-            options: {
-              prettier: false,
-              svgo: false,
-              svgoConfig: {
-                plugins: [{ removeViewBox: false }],
-              },
-              titleProp: true,
-              ref: true,
-            },
-          },
-          'file-loader',
-        ],
+        test: /\.(png|jpg|jpeg|gif|woff|woff2|eot|ttf|otf|svg)$/,
+        type: 'asset/resource', // Handle assets
       },
     ],
   },
