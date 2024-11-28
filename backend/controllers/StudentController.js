@@ -11,6 +11,7 @@ const {
 const upload = require("../config/uploadAvatars");
 const { Op } = require("sequelize");
 const { getLastLectureId } = require("../utils/Group");
+const { getLastLectureId } = require("../utils/Group");
 
 async function deleteImage(imagePath) {
   if (require("fs").existsSync(imagePath)) {
@@ -75,6 +76,86 @@ exports.addStudent = [
     }
   }),
 ];
+
+// exports.getAllStudents = asyncHandler(async (req, res) => {
+//     // Default values for pagination
+//     const page = parseInt(req.query.page) || 1; // Default to 1 if no page is provided
+//     const limit = parseInt(req.query.limit) || 10; // Default to 10 items per page
+//     const all = req.query.all;
+//     const search = req.query.search;
+//     const deleted = req.query.deleted;
+
+//     if(all == "true"){
+//         const students = await Student.findAll({where:{
+//             [Op.or]: [
+//                 { isDeleted: false },
+//                 { isDeleted: deleted == "true" ? true : false }
+//             ]
+//         },include:[{
+//             model: Group,
+//             attributes: ['name',"id"]
+//         }]
+//     });
+//         return res.status(200).json(students);
+//     }
+
+//     // Calculate the offset for pagination
+//     const offset = (page - 1) * limit;
+
+//     try {
+//         // Fetch the students with pagination
+//         let students = null;
+//         if(search){
+//             students = await Student.findAll({
+//                 where: {
+//                     [Op.or]: [
+//                         { name: { [Op.like]: `%${search}%` } },
+//                         { phone_number: { [Op.like]: `%${search}%` } }, // Correct column name
+//                         { id: { [Op.like]: `%${search}%` } },
+//                     ],
+//                     [Op.and]:[
+//                         { isDeleted: false },
+//                         { isDeleted: deleted == "true" ? true : false }
+//                     ]
+//                 },include:[{
+//                     model: Group,
+//                     attributes: ['name',"id"]
+//                 }]
+//             });
+//         }else{
+//             students = await Student.findAll({
+//                 offset: offset,
+//                 limit: limit,
+//                 where:{
+//                     [Op.or]: [
+//                         { isDeleted: false },
+//                         { isDeleted: deleted == "true" ? true : false }
+//                     ]
+//                 },include:[{
+//                     model: Group,
+//                     attributes: ['name',"id"]
+//                 }]
+//             });
+//         }
+
+//         // Get the total count of students to calculate total pages
+//         const totalCount = await Student.count();
+
+//         // Calculate total pages based on the total count and limit
+//         const totalPages = Math.ceil(totalCount / limit);
+
+//         // Send the paginated response
+//         return res.status(200).json({
+//             currentPage: page,
+//             totalPages: totalPages,
+//             totalCount: totalCount,
+//             students: students,
+//             limit
+//         });
+//     } catch (error) {
+//         return res.status(500).json({ message: error.message });
+//     }
+// });
 
 // exports.getAllStudents = asyncHandler(async (req, res) => {
 //     // Default values for pagination

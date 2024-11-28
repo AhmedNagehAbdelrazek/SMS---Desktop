@@ -3,3 +3,7 @@ uploads
 
 logs
 database.sqlite
+
+server-win.exe
+server-macos
+server-linux

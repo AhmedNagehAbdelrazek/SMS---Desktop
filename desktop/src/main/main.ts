@@ -1,22 +1,21 @@
 /* eslint global-require: off, no-console: off, promise/always-return: off */
 
 /**
- * This module executes inside of electron's main process. You can start
- * electron renderer process from here and communicate with the other processes
+ * This module executes inside Electron's main process. You can start
+ * the Electron renderer process from here and communicate with the other processes
  * through IPC.
  *
  * When running `npm run build` or `npm run build:main`, this file is compiled to
- * `./src/main.js` using webpack. This gives us some performance wins.
+ * `./src/main.js` using webpack for better performance.
  */
+
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
+import fs from 'fs';
+import { app, BrowserWindow, shell, ipcMain, dialog, Menu, nativeTheme } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import MenuBuilder from './menu';
+import { exec, execFile } from 'child_process';
 import { resolveHtmlPath } from './util';
-import { exec, execFile } from 'child_process'
-// import server from '../../release/app/backend/server';
-import fs from 'fs';
 
 class AppUpdater {
   constructor() {
@@ -27,45 +26,53 @@ class AppUpdater {
 }
 
 const logDir = path.join(process.cwd(), 'log');
-if (!fs.existsSync(logDir)){
+if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir);
 }
 log.transports.file.resolvePath = () => path.join(logDir, 'app.log');
 
+let mainWindow : BrowserWindow | null = null;
 
-let mainWindow: BrowserWindow | null = null;
+// Set up dark mode listener
+nativeTheme.on('updated', () => {
+  const isDarkMode = nativeTheme.shouldUseDarkColors;
+  mainWindow?.webContents.send('theme-changed', isDarkMode ? 'dark' : 'light');
+});
 
+// IPC event handlers
 ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
+  const msgTemplate = (pingPong :any) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
 });
 
+// Dynamic imports for conditional modules
 if (process.env.NODE_ENV === 'production') {
-  const sourceMapSupport = require('source-map-support');
-  sourceMapSupport.install();
+  import('source-map-support').then((sourceMapSupport) => sourceMapSupport.default.install());
 }
 
-const isDebug =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+const isDebug = process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
-  require('electron-debug')();
+  import('electron-debug').then((debug) => debug.default());
 }
 
-const installExtensions = async () => {
-  const installer = require('electron-devtools-installer');
-  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS'];
+Menu.setApplicationMenu(null);
 
-  return installer
-    .default(
-      extensions.map((name) => installer[name]),
-      forceDownload,
-    )
-    .catch(console.log);
+// Install extensions dynamically
+const installExtensions = async () => {
+  const { default: installer, REACT_DEVELOPER_TOOLS } = await import('electron-devtools-installer');
+  const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
+  const extensions = [REACT_DEVELOPER_TOOLS];
+
+  try {
+    await installer(extensions.map((name) => name), forceDownload);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
+// Create the main window
 const createWindow = async () => {
   if (isDebug) {
     await installExtensions();
@@ -75,18 +82,20 @@ const createWindow = async () => {
     ? path.join(process.resourcesPath, 'assets')
     : path.join(__dirname, '../../assets');
 
-  const getAssetPath = (...paths: string[]): string => {
-    return path.join(RESOURCES_PATH, ...paths);
-  };
+  const getAssetPath = (...paths :any) => path.join(RESOURCES_PATH, ...paths);
 
   mainWindow = new BrowserWindow({
     show: false,
+    minWidth: 1024,
+    minHeight: 728,
     width: 1024,
     height: 728,
+    transparent: true,
     icon: getAssetPath('icon.png'),
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: true,
+      contextIsolation: false,
       sandbox:false,
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
@@ -97,75 +106,48 @@ const createWindow = async () => {
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    if (process.env.START_MINIMIZED) {
-      mainWindow.minimize();
-    } else {
-      mainWindow.show();
-    }
+    if (!mainWindow) throw new Error('"mainWindow" is not defined');
+    if (process.env.START_MINIMIZED) mainWindow.minimize();
+    else mainWindow.show();
   });
-
+  
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
-  // Open urls in the user's browser
   mainWindow.webContents.setWindowOpenHandler((edata) => {
     shell.openExternal(edata.url);
     return { action: 'deny' };
   });
-  mainWindow.webContents.openDevTools();
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
+
   new AppUpdater();
 };
 
-const serverPath = path.join(process.resourcesPath, 'resources' ,'server', 'server-win.exe');
-// const serverPath = "C:\\Users\\Ahmed Medo\\Desktop\\New folder\\SMS---Desktop\\release\\build\\win-unpacked\\resources\\resources\\server\\server-win.exe";
+// Server management
+const serverPath = path.join(process.cwd(), 'resources', 'server', 'server-win.exe');
+let serverProcess : any = null;
 
-let serverProcess:any;
-
-function startServerIfNotRunning() {
-
-  exec('netstat -an | find "3000"', (error, stdout, stderr) => {
-      console.log("result", stdout.length);
-      if (!stdout.includes('LISTENING')) {
-          serverProcess = execFile(`${serverPath}`, (error) => {
-            if (error) {
-              console.error('Error starting server:', error);
-            }
-        });
-        console.log('Server started');
-      }
+const startServerIfNotRunning = () => {
+  exec('netstat -an | find "65000"', (error, stdout) => {
+    if (!stdout.includes('LISTENING')) {
+      serverProcess = execFile(serverPath, (err) => {
+        if (err) console.error('Error starting server:', err);
+      });
+      console.log('Server started');
+    }
   });
-}
+};
 
-function stopServer() {
-  if (serverProcess) {
-      serverProcess.kill(); // Terminate the server process
-  }
-}
+const stopServer = () => {
+  if (serverProcess) serverProcess.kill();
+};
 
-/**
- * Add event listeners...
- */
-app.on("before-quit",()=>{
-  stopServer();
-});
+// App event listeners
+app.on('before-quit', stopServer);
 
 app.on('window-all-closed', () => {
-  // Respect the OSX convention of having the application in memory even
-  // after all windows have been closed
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  if (process.platform !== 'darwin') app.quit();
 });
-
 
 app
   .whenReady()
@@ -173,12 +155,18 @@ app
     createWindow();
     startServerIfNotRunning();
     app.on('activate', () => {
-      // On macOS it's common to re-create a window in the app when the
-      // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) createWindow();
     });
   })
   .catch(console.log);
 
+// IPC event handlers for window control
+ipcMain.on('window:minimize', () => mainWindow?.minimize());
 
+ipcMain.on('window:toggle-fullscreen', () => {
+  const isFullScreen = !mainWindow?.isFullScreen();
+  mainWindow?.setFullScreen(isFullScreen);
+  mainWindow?.webContents.send('window:fullscreen-changed', isFullScreen);
+});
 
+ipcMain.on('window:close', () => mainWindow?.close());

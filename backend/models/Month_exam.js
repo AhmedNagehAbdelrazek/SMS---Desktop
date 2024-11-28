@@ -13,7 +13,34 @@ Month_Exam.init(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+    },
+    full_mark:{
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    start_time: {
+      type: DataTypes.TIME,
+      allowNull: true
+    },
+    end_time: {
+      type: DataTypes.TIME,
+      allowNull: true
+    },
+    duration: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    questions_number: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    month_number: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    year: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     },
     group_id: {
       type: DataTypes.INTEGER,

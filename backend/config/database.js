@@ -37,7 +37,7 @@ async function initDBConnection () {
       //   name: 'unique_student_id_constraint'
       // });
       await sequelize.sync({ 
-        alter: true,
+        // alter: true,
         force:false
       });
       const User = require("../models/User");
