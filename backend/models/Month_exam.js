@@ -14,6 +14,10 @@ Month_Exam.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    fullmark:{
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     group_id: {
       type: DataTypes.INTEGER,
       references: {

@@ -28,6 +28,16 @@ Group.init(
       type: DataTypes.NUMBER,
       defaultValue: 0,
     },
+    center:{
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    level:{
+      type: DataTypes.NUMBER,
+      allowNull: false,
+      min:1,
+      max:6
+    },
     day_of_week: {
       type: DataTypes.NUMBER,
       allowNull: false,
