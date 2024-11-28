@@ -19,6 +19,12 @@ Student.init(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    level:{
+      type: DataTypes.NUMBER,
+      allowNull: true,
+      min:1,
+      max:6
+    },
     phone_number: {
       type: DataTypes.NUMBER,
       allowNull: false,
