@@ -1,6 +1,6 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-import './output.css';
+// import './output.css';
 import {
   Group,
   Attendance,
