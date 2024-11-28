@@ -166,6 +166,7 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
         deleted,
         blocked,
         attended,
+        groupId,
         sortBy = "id", // Default sort by ID
         sortOrder = "ASC", // Default sort order
     } = req.query;
@@ -180,7 +181,7 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
             blocked ? { blocked: blocked === "true" } : {},
         ],
     };
-
+    
     // Add search filter if provided
     if (search) {
         whereConditions[Op.or] = [
@@ -188,6 +189,11 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
             { phone_number: { [Op.like]: `%${search}%` } },
             { id: { [Op.like]: `%${search}%` } },
         ];
+    }
+
+    // Add group filter if provided
+    if (groupId) {
+        whereConditions.group_id = groupId;
     }
 
     // Sorting configuration

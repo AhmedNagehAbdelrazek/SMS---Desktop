@@ -2,8 +2,6 @@
 export default function CustomHeader() {
   const handleMinimize = () => {
     window.api?.minimizeWindow();
-    console.log(window.api);
-    console.log("minim");
   };
 
   const handleToggleFullscreen = () => {
