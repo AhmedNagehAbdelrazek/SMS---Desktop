@@ -21,7 +21,7 @@ Student.init(
     },
     level:{
       type: DataTypes.NUMBER,
-      allowNull: false,
+      allowNull: true,
       min:1,
       max:6
     },

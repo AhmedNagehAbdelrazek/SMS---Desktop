@@ -30,11 +30,11 @@ Group.init(
     },
     center:{
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: true
     },
     level:{
       type: DataTypes.NUMBER,
-      allowNull: false,
+      allowNull: true,
       min:1,
       max:6
     },
