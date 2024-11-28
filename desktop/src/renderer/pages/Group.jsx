@@ -43,7 +43,6 @@ export default function Group() {
   const { id } = useParams();
   const { addAlert } = useAlert();
   const navigate = useNavigate();
-  const [filteredStudents, setFilteredStudents] = useState([]);
   const [students, setStudents] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [groups, setGroups] = useState([]);
@@ -102,25 +101,9 @@ export default function Group() {
     }
   }, [selectedGroup]);
 
-  const searchStudent = (searchText) => {
-    if (!searchText) {
-      setFilteredStudents(students);
-      return;
-    }
-
-    setFilteredStudents(
-      students.filter(
-        (student) =>
-          student.id.includes(searchText) ||
-          student.name.includes(searchText) ||
-          student.phone_number.toString().includes(searchText)
-      ),
-    );
-  };
-
   const getAllStudents = (id) => {
     axios
-      .get(`http://localhost:65000/api/group/students/${id}`)
+      .get(`http://localhost:65000/api/student?groupId=${selectedGroup?.id}&all=true`)
       .then((response) => {
         setStudents(response.data);
         setFilteredStudents(response.data);
@@ -139,10 +122,6 @@ export default function Group() {
       .catch((error) => {
         console.error('Error fetching group details:', error);
       });
-  };
-
-  const handleSearch = (searchText) => {
-    searchStudent(searchText);
   };
 
   const handleRowClick = (student) => {
@@ -215,26 +194,6 @@ export default function Group() {
     ],
   };
 
-  const onFilter = ({
-    searchText,
-    sortField,
-    isReverse,
-    isBlocked,
-    isNotBlocked,
-    isAttend,
-    isAbsent,
-  }) => {
-    console.log(
-        searchText,
-        sortField,
-        isReverse,
-        isBlocked,
-        isNotBlocked,
-        isAttend,
-        isAbsent,
-    );
-  };
-
   return (
     <div
       lang="ar"
@@ -258,11 +217,11 @@ export default function Group() {
       </div>
 
       <div className="mb-4">
-      <SearchBar onFilter={onFilter} />
+        <SearchBar url={`http://localhost:65000/api/student?groupId=${selectedGroup?.id}&`} setFilteredData={newData => setStudents(newData)} />
       </div>
 
       <StudentTable 
-        data={filteredStudents}
+        data={students}
         onRowClick={handleRowClick}
         additionalColumns={
           [
@@ -271,11 +230,9 @@ export default function Group() {
               dataIndex: 'attendance',
               key: 'attendance',
               width: '10%',
-              render: (attendance) => {
-                console.log(attendance);
-                
+              render: (attended) => {
                 return (
-                  <span className={`w-2 aspect-square inline-block rounded-full ${attendance   ? 'bg-green-500' : 'bg-red-500'}`} />
+                  <span className={`w-2 aspect-square inline-block rounded-full ${attended   ? 'bg-green-500' : 'bg-red-500'}`} />
                 )
               },
             }

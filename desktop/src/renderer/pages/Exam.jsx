@@ -11,7 +11,6 @@ import { useAlert } from '../context/AlertContext';
 export default function Exam() {
   const { addAlert } = useAlert();
   const navigate = useNavigate();
-  const [filteredStudents, setFilteredStudents] = useState([]);
   const [students, setStudents] = useState([]);
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState(null);
@@ -29,6 +28,21 @@ export default function Exam() {
         addAlert('حدث خطأ أثناء جلب البيانات', '', 'error');
       });
   }, []);
+
+  useEffect(() => {
+    getAllStudents();
+  }, [selectedExam]);
+
+  const getAllStudents = (id) => {
+    axios
+      .get(`http://localhost:65000/api/student?groupId=${selectedExam?.group_id}&all=true`)
+      .then((response) => {
+        setStudents(response.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching students:', error);
+      });
+  };
 
   const getExamDetails = (exam_id) => {
     axios
@@ -54,26 +68,6 @@ export default function Exam() {
     { key: '1', label: 'الاسم', children: selectedExam?.name },
   ];
 
-  const onFilter = ({
-    searchText,
-    sortField,
-    isReverse,
-    isBlocked,
-    isNotBlocked,
-    isAttend,
-    isAbsent,
-  }) => {
-    console.log(
-        searchText,
-        sortField,
-        isReverse,
-        isBlocked,
-        isNotBlocked,
-        isAttend,
-        isAbsent,
-    );
-  };
-
   return (
     <div
       lang="ar"
@@ -96,11 +90,11 @@ export default function Exam() {
       </div>
 
       <div className="mb-4">
-        <SearchBar onFilter={onFilter} />
+        <SearchBar url={`http://localhost:65000/api/student?groupId=${selectedExam?.group_id}&`} setFilteredData={newData => setStudents(newData)} />
       </div>
 
       <StudentTable
-        data={filteredStudents}
+        data={students}
         onRowClick={handleRowClick}
         additionalColumns={[
           {

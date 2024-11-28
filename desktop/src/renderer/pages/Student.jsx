@@ -40,7 +40,7 @@ ChartJS.register(
 export default function Student() {
   const { id } = useParams();
   const { addAlert } = useAlert();
-  const [filteredData, setFilteredData] = useState([]);
+  const [studetns, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [groupDetails, setGroupDetails] = useState(null);
   const [confirmAction, setConfirmAction] = useState('');
@@ -93,30 +93,6 @@ export default function Student() {
       });
   };
 
-  const searchStudent = (searchText) => {
-    if (!searchText.trim()) {
-      getAllStudents();
-      return;
-    }
-
-    axios
-      .get(`http://localhost:65000/api/student?search=${searchText}`)
-      .then((response) => {
-        const data = response.data.students.map((student) => ({
-          key: student.id,
-          ...student,
-        }));
-        setFilteredData(data);
-      })
-      .catch((error) => {
-        if (error.response?.status === 404) {
-          addAlert('لا يوجد طلاب يطابقون البحث', '', 'warning', 3);
-          setFilteredData([]);
-        }
-        console.error('Error searching students:', error);
-      });
-  };
-
   const getAllStudents = () => {
     axios
       .get(`http://localhost:65000/api/student?all=true`)
@@ -125,15 +101,11 @@ export default function Student() {
           key: student.id,
           ...student,
         }));
-        setFilteredData(data);
+        setStudents(data);
       })
       .catch((error) => {
         console.error('Error fetching student:', error);
       });
-  };
-
-  const handleSearch = (searchText) => {
-    searchStudent(searchText);
   };
 
   const handleRowClick = (student) => {
@@ -431,26 +403,6 @@ export default function Student() {
         },
       ];
 
-      const onFilter = ({
-        searchText,
-        sortField,
-        isReverse,
-        isBlocked,
-        isNotBlocked,
-        isAttend,
-        isAbsent,
-      }) => {
-        console.log(
-            searchText,
-            sortField,
-            isReverse,
-            isBlocked,
-            isNotBlocked,
-            isAttend,
-            isAbsent,
-        );
-      };
-
   return (
     <div
       lang="ar"
@@ -458,10 +410,10 @@ export default function Student() {
       className="w-full min-h-full p-4 bg-macos-light-gray text-macos-text font-sans"
     >
       <div className="mb-4">
-        <SearchBar onFilter={onFilter} />
+        <SearchBar url='http://localhost:65000/api/student?' setFilteredData={newData => setStudents(newData)} />
       </div>
 
-      <StudentTable data={filteredData} onRowClick={handleRowClick} />
+      <StudentTable data={studetns} onRowClick={handleRowClick} />
 
       <ConfirmActionModal
         action={confirmAction}

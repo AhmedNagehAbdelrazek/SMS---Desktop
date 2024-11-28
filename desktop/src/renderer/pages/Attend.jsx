@@ -166,6 +166,7 @@ export default function Attend() {
               <QrReader
                 delay={700}
                 ref={qrReaderRef}
+                className='w-full h-full'
                 onResult={(result, error) => {
                   if (!!result) {
                     handleScan(result?.text);

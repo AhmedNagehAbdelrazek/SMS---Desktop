@@ -1,29 +1,37 @@
 import { useEffect, useState } from 'react';
 import { Input, Select, Checkbox } from 'antd';
 const { Option } = Select;
+import axios from 'axios';
 
-export default function SearchBar({ onFilter }) {
+export default function SearchBar({ url, setFilteredData }) {
   const [searchText, setSearchText] = useState('');
-  const [sortField, setSortField] = useState('name');
+  const [sortField, setSortField] = useState('id');
   const [isReverse, setIsReverse] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
   const [isNotBlocked, setIsNotBlocked] = useState(true);
   const [isAttend, setIsAttend] = useState(true);
   const [isAbsent, setIsAbsent] = useState(true);
 
+
   const handleSearch = () => {
-    onFilter({
-      searchText,
-      sortField,
-      isReverse,
-      isBlocked,
-      isNotBlocked,
-      isAttend,
-      isAbsent,
-    });
+    axios
+      .get(`${url}all=true&search=${searchText}&sortBy=${sortField}&sortOrder=${isReverse ? 'DESC' : 'ASC'}${isBlocked & isNotBlocked ? '' : '&blocked=' + isBlocked}${isAttend & isAbsent ? '' : '&attended=' + isAttend}`)
+      .then((response) => {
+        const data = response.data.map((student) => ({
+          key: student.id,
+          ...student,
+        }));
+        setFilteredData(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching student:', error);
+      });
   };
 
   useEffect(() => {
+    if ((!isBlocked || !isNotBlocked) && sortField === 'blocked') {
+      setSortField('id');      
+    }
     handleSearch();
   }, [searchText, sortField, isReverse, isBlocked, isNotBlocked, isAttend, isAbsent]);
 
@@ -44,9 +52,8 @@ export default function SearchBar({ onFilter }) {
           className="w-full mb-2"
         >
           <Option value="name">الاسم</Option>
-          <Option value="student-id">كود الطالب</Option>
-          <Option value="blocked">الحظر</Option>
-          <Option value="attendance">الحضور</Option>
+          <Option value="id">كود الطالب</Option>
+          {isBlocked & isNotBlocked && <Option value="blocked">الحظر</Option>}
         </Select>
       </div>
       <div className="flex flex-wrap gap-4">
