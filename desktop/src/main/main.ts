@@ -31,7 +31,7 @@ if (!fs.existsSync(logDir)) {
 }
 log.transports.file.resolvePath = () => path.join(logDir, 'app.log');
 
-let mainWindow = null;
+let mainWindow : BrowserWindow | null = null;
 
 // Set up dark mode listener
 nativeTheme.on('updated', () => {
@@ -41,7 +41,7 @@ nativeTheme.on('updated', () => {
 
 // IPC event handlers
 ipcMain.on('ipc-example', async (event, arg) => {
-  const msgTemplate = (pingPong) => `IPC test: ${pingPong}`;
+  const msgTemplate = (pingPong :any) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
 });
@@ -125,7 +125,7 @@ const createWindow = async () => {
 
 // Server management
 const serverPath = path.join(process.cwd(), 'resources', 'server', 'server-win.exe');
-let serverProcess;
+let serverProcess : any = null;
 
 const startServerIfNotRunning = () => {
   exec('netstat -an | find "65000"', (error, stdout) => {
