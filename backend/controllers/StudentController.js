@@ -226,7 +226,7 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
                             order: [["createdAt", "DESC"]],
                         });
                         if (hasAttended) {
-                            return student
+                            return {...student.toJSON(),attended:true}
                         } else {
                             return null
                         }
@@ -238,6 +238,7 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
                         const studentId = student.id;
 
                         let hasAttended = false;
+                        // and he is not in any group
                         if (student.group_id) {
                             let lastLectureId = await getLastLectureId(student.group_id);
                             hasAttended = await Attendance.findOne({
@@ -255,7 +256,7 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
                         if (hasAttended) {
                             return null
                         } else {
-                            return student
+                            return {...student.toJSON(),attended:false}
                         }
                     })
                 );
