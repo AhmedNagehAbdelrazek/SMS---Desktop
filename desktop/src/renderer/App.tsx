@@ -8,6 +8,7 @@ import {
   Student,
   Exam,
   Layout,
+  LectureExam,
 } from './pages';
 import { AlertProvider } from './context';
 
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="group/:id" element={<Group />} />
             <Route path="attendance" element={<Attendance />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="lectureExam" element={<LectureExam />} />
           </Route>
         </Routes>
       </Router>

@@ -1,5 +1,5 @@
 const expressAsyncHandler = require("express-async-handler");
-const { Lecture_Exam, Student, Lecture } = require("../models/");
+const { Lecture_Exam, Student, Lecture, Group } = require("../models/");
 const { getLastLectureId } = require("../utils/Group");
 
 exports.setLectureExamGrade = expressAsyncHandler(async (req, res) => {
@@ -46,3 +46,34 @@ exports.updateLectureExamGrade = expressAsyncHandler(async (req, res) => {
   res.status(200).json({ message: "Grade updated", examGrade });
 
 });
+
+exports.getAllStudentsWithGrades = expressAsyncHandler(async (req, res) => {
+  const { groupId ,lectureId} = req.query;
+  console.log(groupId,lectureId);
+  
+  // get the lecture 
+  let lecture = await Lecture.findOne({ where: { id: lectureId } });
+
+  // get all the lecture exams 
+  const exams = await Lecture_Exam.findAll({ where: { lecture_id: lecture.id } });
+
+  // get all the students
+  const students = await Student.findAll({ where: { group_id: groupId } ,include:[Group]});
+
+  // Convert students to plain objects
+  const plainStudents = students.map(student => ({...student.toJSON(),grade:null}));
+
+  // Add the grades to the students
+  for (let i = 0; i < plainStudents.length; i++) {
+    for (let j = 0; j < exams.length; j++) {
+      if (plainStudents[i].id == exams[j].student_id) {
+        plainStudents[i].grade = exams[j].grade;
+        break; // Exit the loop if a grade is found
+      } else {
+        plainStudents[i].grade = null;
+      }
+    }
+  }
+
+  res.status(200).json(plainStudents);
+})

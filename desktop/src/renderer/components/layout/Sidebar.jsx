@@ -8,6 +8,7 @@ import {
   CameraFilled,
   CameraOutlined,
   PaperClipOutlined,
+  HighlightOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
@@ -53,6 +54,12 @@ export default function Sidebar() {
       ),
       label: 'تسجيل الحضور',
       link: '/attendance',
+    },
+    {
+      key: 'lectureExam',
+      icon: <HighlightOutlined />,
+      label: 'امتحان الحصه',
+      link: '/lectureExam',
     },
     {
       key: 'exam',
