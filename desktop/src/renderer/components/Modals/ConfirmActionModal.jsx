@@ -9,7 +9,7 @@ export default function ConfirmActionModal({
   return (
     <Modal
       title={`تأكيد ${action}`}
-      visible={visible}
+      open={visible}
       onOk={onConfirm}
       onCancel={onCancel}
     >

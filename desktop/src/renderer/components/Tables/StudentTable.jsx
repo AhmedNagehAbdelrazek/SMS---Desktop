@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table, Button } from 'antd';
 
 export default function StudentTable({ data, onRowClick, itemsPerPage = 10, additionalColumns=[] }) {
@@ -6,6 +6,8 @@ export default function StudentTable({ data, onRowClick, itemsPerPage = 10, addi
 
   // Divide data into chunks
   const chunkedData = [];
+
+  data = data.map((student) => ({ ...student, key: student.id , group_name:student?.Group?.name || "لا يوجد جروب" }));
   for (let i = 0; i < data.length; i += itemsPerPage) {
     chunkedData.push(data.slice(i, i + itemsPerPage));
   }
@@ -23,12 +25,18 @@ export default function StudentTable({ data, onRowClick, itemsPerPage = 10, addi
       title: 'الاسم',
       dataIndex: 'name',
       key: 'name',
-      width: '35%',
+      width: '20%',
     },
     {
       title: 'رقم الهاتف',
       dataIndex: 'phone_number',
       key: 'phone_number',
+      width: '20%',
+    },
+    {
+      title: 'اسم الجروب',
+      dataIndex: 'group_name',
+      key: 'group_name',
       width: '35%',
     },
     ...additionalColumns,
@@ -42,6 +50,10 @@ export default function StudentTable({ data, onRowClick, itemsPerPage = 10, addi
       ),
     },
   ];
+  useEffect(() => {
+    data = data.map((student) => ({ ...student, key: student.id , group_name:student?.Group?.name || "لا يوجد جروب" }));
+    console.log({students:data});
+  }, [data]);
 
   const renderPageButtons = () => {
     const buttons = [];

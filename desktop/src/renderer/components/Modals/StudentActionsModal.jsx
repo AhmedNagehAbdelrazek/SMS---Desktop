@@ -5,7 +5,7 @@ export default function StudentActionsModal({ student, visible, onClose, onActio
   return (
     <Modal
       title={`#${student?.id}`}
-      visible={visible}
+      open={visible}
       onCancel={onClose}
       footer={null}
     >

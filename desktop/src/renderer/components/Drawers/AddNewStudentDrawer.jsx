@@ -89,7 +89,7 @@ export default function AddNewStudentDrawer({ visible, onClose }) {
 
   return (
     <Drawer
-      visible={visible}
+      open={visible}
       onClose={onClose}
       width={640}
       className='[direction:rtl]'
@@ -150,9 +150,12 @@ export default function AddNewStudentDrawer({ visible, onClose }) {
             <Select
               showSearch
               getPopupContainer={(triggerNode) => triggerNode.parentNode}
+              filterOption={(input, option) =>
+                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+              }
             >
               {groups.map((group) => (
-                <Select.Option key={group.id} value={group.id}>
+                <Select.Option key={group.id} value={group.id} label={group.name}>
                   {group.name}
                 </Select.Option>
               ))}

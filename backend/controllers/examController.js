@@ -35,7 +35,6 @@ exports.addMonthlyExamGrade = expressAsyncHandler(async (req, res) => {
         grade
     });
     res.status(200).json({ message: 'Grade updated', examGrade });
-
 })
 
 exports.getAllMonthlyExams = expressAsyncHandler(async (req, res) => {
@@ -44,41 +43,156 @@ exports.getAllMonthlyExams = expressAsyncHandler(async (req, res) => {
 
 });
 
+// exports.getMonthExamFullReport = expressAsyncHandler(async (req, res) => {
+//     const { id: monthExamId } = req.params;
+//     const examExist = await Month_Exam.findByPk(monthExamId);
+//     if (!examExist) {
+//         return res.status(404).json({ message: 'Exam not found' });
+//     }
+//     const groupId = examExist.group_id;
+
+//     const exams = await Exam.findAll({ where: { month_exam_id: monthExamId } });
+//     const studentsAttended = exams.map(exam => exam.student_id);
+
+//     const allStudents = await Student.findAll({
+//         where: { group_id: groupId, isDeleted: false },
+//         include:{
+//             model: Group,
+//             attributes: ['id', 'name']
+//         }
+//     });
+
+//     let studentsAttendedExam = allStudents.filter(student => studentsAttended.includes(parseInt(student.id)));
+//     studentsAttendedExam = studentsAttendedExam.map(student => ({...student.toJSON(), Attended:true , grade: exams.find(exam=>exam.student_id == student.id)?.grade}));
+//     let studentsAttendedExamIds = studentsAttendedExam.map(s=> s.id);
+
+
+//     let notAttendedStudents = allStudents.filter(student => !studentsAttendedExamIds.includes(student.id));
+//     notAttendedStudents = notAttendedStudents.map(student => ({...student.toJSON(), Attended:false ,grade:null}));
+    
+//     const result = {
+//         id:examExist.id,
+//         name:examExist.name,
+//         group_id:examExist.group_id,
+//         fullmark:examExist.fullmark,
+//         Group: examExist.Group,
+//         totalSuccessededStudents: exams.filter(exam => exam.grade >= 50).length,
+//         totalFailedStudents: exams.filter(exam => exam.grade < 50).length,
+//         totalStudents: exams.length,
+//         averageGrade: exams.reduce((total, exam) => total + exam.grade, 0) / exams.length,
+//         students: [...studentsAttendedExam,...notAttendedStudents]
+//     }
+//     res.status(200).json(result);
+// });
+
 exports.getMonthExamFullReport = expressAsyncHandler(async (req, res) => {
     const { id: monthExamId } = req.params;
+
+    // Query parameters for search, sort, and filtering
+    const { 
+        search, // Search keyword for name or phone number
+        sortBy, // Field to sort by (e.g., name, grade)
+        sortOrder = 'ASC', // Sort order (default to ASC)
+        blocked, // Filter by blocked status (true/false)
+        attended, // Filter by attendance (true/false)
+        absent // Filter by absence (true/false)
+    } = req.query;
+
+    // Check if the exam exists
     const examExist = await Month_Exam.findByPk(monthExamId);
     if (!examExist) {
         return res.status(404).json({ message: 'Exam not found' });
     }
+
     const groupId = examExist.group_id;
 
+    // Fetch exams and students
     const exams = await Exam.findAll({ where: { month_exam_id: monthExamId } });
     const studentsAttended = exams.map(exam => exam.student_id);
 
     const allStudents = await Student.findAll({
         where: { group_id: groupId, isDeleted: false },
+        include: {
+            model: Group,
+            attributes: ['id', 'name']
+        }
     });
 
-    let studentsAttendedExam = allStudents.filter(student => studentsAttended.includes(parseInt(student.id)));
-    studentsAttendedExam = studentsAttendedExam.map(student => ({...student.toJSON(), isAttended:true , grade: exams.find(exam=>exam.student_id == student.id)?.grade}));
-    let studentsAttendedExamIds = studentsAttendedExam.map(s=> s.id);
+    // Mark attendance and grades for students
+    let studentsAttendedExam = allStudents
+        .filter(student => studentsAttended.includes(parseInt(student.id)))
+        .map(student => ({
+            ...student.toJSON(),
+            Attended: true,
+            grade: exams.find(exam => exam.student_id == student.id)?.grade
+        }));
 
+    let studentsAttendedExamIds = studentsAttendedExam.map(s => s.id);
 
-    let notAttendedStudents = allStudents.filter(student => !studentsAttendedExamIds.includes(student.id));
-    notAttendedStudents = notAttendedStudents.map(student => ({...student.toJSON(), isAttended:false ,grade:null}));
+    let notAttendedStudents = allStudents
+        .filter(student => !studentsAttendedExamIds.includes(student.id))
+        .map(student => ({
+            ...student.toJSON(),
+            Attended: false,
+            grade: null
+        }));
+
+    let students = [...studentsAttendedExam, ...notAttendedStudents];
+
+    // Apply filtering
+    if((attended == "true" || absent == "true") && !(attended == "true" && absent == "true") && !(attended == "false" && absent == "false")){
+        students = students.filter(student => {
+            const matchesSearch = !search || 
+                student.name?.toLowerCase().includes(search.toLowerCase()) ||
+                student.phone_number?.toString().includes(search);
     
+            const matchesBlocked = blocked === undefined || student.blocked === (blocked === 'true');
+    
+            const matchesAttendance = 
+                (attended === undefined && absent === undefined) ||
+                (attended === 'true' && student.Attended) ||
+                (absent === 'true' && !student.Attended);
+    
+            return matchesSearch && matchesBlocked && matchesAttendance;
+        });
+    }
+
+    // Apply sorting
+    if (sortBy) {
+        students.sort((a, b) => {
+            const valueA = a[sortBy];
+            const valueB = b[sortBy];
+
+            if (valueA === null || valueA === undefined) return sortOrder === 'ASC' ? 1 : -1;
+            if (valueB === null || valueB === undefined) return sortOrder === 'ASC' ? -1 : 1;
+
+            if (typeof valueA === 'string' && typeof valueB === 'string') {
+                return sortOrder === 'ASC'
+                    ? valueA.localeCompare(valueB)
+                    : valueB.localeCompare(valueA);
+            }
+
+            return sortOrder === 'ASC' ? valueA - valueB : valueB - valueA;
+        });
+    }
+
+    // Prepare final response
     const result = {
-        name:examExist.name,
-        fullmark:examExist.fullmark,
+        id: examExist.id,
+        name: examExist.name,
+        group_id: examExist.group_id,
+        fullmark: examExist.fullmark,
+        Group: examExist.Group,
         totalSuccessededStudents: exams.filter(exam => exam.grade >= 50).length,
         totalFailedStudents: exams.filter(exam => exam.grade < 50).length,
         totalStudents: exams.length,
-        averageGrade: exams.reduce((total, exam) => total + exam.grade, 0) / exams.length,
-        students: [...studentsAttendedExam,...notAttendedStudents]
-    }
-    res.status(200).json(result);
+        averageGrade: exams.length ? exams.reduce((total, exam) => total + exam.grade, 0) / exams.length : 0,
+        students
+    };
 
+    res.status(200).json(result);
 });
+
 
 exports.deletemonthExam = expressAsyncHandler(async (req, res) => {
     const { id } = req.params;

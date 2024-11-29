@@ -66,7 +66,7 @@ export default function EditGroupDrawer({ visible, onClose, groupId }) {
 
   return (
     <Drawer
-      visible={visible}
+      open={visible}
       onClose={onClose}
       width={640}
       className="[direction:rtl]"

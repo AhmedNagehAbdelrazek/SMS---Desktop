@@ -34,7 +34,7 @@ export default function AddNewGroupDrawer({ visible, onClose }) {
 
   return (
     <Drawer
-      visible={visible}
+      open={visible}
       onClose={onClose}
       width={640}
       className="[direction:rtl]"

@@ -3,7 +3,7 @@ import { Input, Select, Checkbox } from 'antd';
 const { Option } = Select;
 import axios from 'axios';
 
-export default function SearchBar({ url, setFilteredData }) {
+export default function SearchBar({ url, setFilteredData , onDataResponse , }) {
   const [searchText, setSearchText] = useState('');
   const [sortField, setSortField] = useState('id');
   const [isReverse, setIsReverse] = useState(false);
@@ -15,12 +15,17 @@ export default function SearchBar({ url, setFilteredData }) {
 
   const handleSearch = () => {
     axios
-      .get(`${url}all=true&search=${searchText}&sortBy=${sortField}&sortOrder=${isReverse ? 'DESC' : 'ASC'}${isBlocked & isNotBlocked ? '' : '&blocked=' + isBlocked}${isAttend & isAbsent ? '' : '&attended=' + isAttend}`)
+      .get(`${url}all=true&search=${searchText}&sortBy=${sortField}&sortOrder=${isReverse ? 'DESC' : 'ASC'}${isBlocked & isNotBlocked ? '' : '&blocked=' + isBlocked}${(!isAttend && !isAbsent) ? '' : (isAttend && !isAbsent) ? '&attended=true' : (!isAttend && isAbsent) ? '&attended=false' : ''}&absent=${isAbsent}`)
       .then((response) => {
-        const data = response.data.map((student) => ({
-          key: student.id,
-          ...student,
-        }));
+        let data = [];
+        if(onDataResponse){
+          data = onDataResponse(response.data);
+        }else{
+          data = response.data.map((student) => ({
+            key: student.id,
+            ...student,
+          }));
+        }
         setFilteredData(data);
       })
       .catch((error) => {

@@ -188,6 +188,9 @@ export default function Attend() {
             value={selectedDevice}
             onChange={setSelectedDevice}
             style={{ width: '100%' }}
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
           >
             {devices.map((device) => (
               <Select.Option key={device.deviceId} value={device.deviceId}>
@@ -260,7 +263,7 @@ export default function Attend() {
                           getPopupContainer={(triggerNode) => triggerNode.parentNode}
                         >
                           {groups.map((group) => (
-                            <Select.Option key={group.id} value={group.id}>
+                            <Select.Option key={group.id} value={group.id} label={group.name}>
                               {group.name}
                             </Select.Option>
                           ))}

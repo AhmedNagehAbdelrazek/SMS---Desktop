@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const { Attendance, Lecture, Student } = require("../models");
+const { Attendance, Lecture, Student, Group } = require("../models");
 const { getLastLectureId } = require("../utils/Group");
 
 exports.attend = asyncHandler(async (req, res) => {
@@ -97,6 +97,7 @@ exports.getAllAttendancesForGroup = asyncHandler(async (req, res) => {
     // Get all students in the specified group
     const allStudents = await Student.findAll({
         where: { group_id: groupId, isDeleted: false },
+        include: [{ model: Group, attributes: ['id', 'name'] }],
     });
 
     // Get all lectures for the specified group
@@ -110,25 +111,41 @@ exports.getAllAttendancesForGroup = asyncHandler(async (req, res) => {
             lecture_id: allLectures.map(lecture => lecture.id),
             isDeleted: false,
         },
-        include: [{ model: Student, attributes: ['id', 'name'] }],
+        include: [{ model: Student ,include:[Group] }],
     });
+    // return res.json({attendanceRecords,allLectures})
 
     // Group attendance by lecture
     const lectureAttendance = allLectures.map(lecture => {
         // Get attended students for this lecture
-        const attendedStudents = attendanceRecords
-            .filter(att => att.lecture_id === lecture.id)
-            .map(att => att.Student);
+        let attendedStudents = attendanceRecords
+        .filter(att => att.lecture_id === lecture.id)
+        .map(att => ({...att.Student.toJSON(),isCompensatory:att.isCompensatory,attended:att.attended,date:att.createdAt}));
+        
+        // return res.json({attendedStudents})
+        let attendedStudentsIds = attendedStudents.map(s=> s.id);
+        let CompensatoryAttendedStudents = attendedStudents.filter(s=> s.isCompensatory).map(s=> s.id);
 
         // Get not-attended students by excluding those in attendedStudents
-        const notAttendedStudents = allStudents.filter(
-            student => !attendedStudents.includes(student.id)
+        let notAttendedStudents = allStudents.filter(
+            student => !attendedStudentsIds.includes(student.id)
         );
+        // attendedStudents = allStudents.filter(
+        //     student => attendedStudentsIds.includes(student.id)
+        // );
+        // return res.json({attendedStudents})
+        
+        notAttendedStudents = notAttendedStudents.map(student => ({...student.toJSON(),attended:false,isCompensatory:false}));
+
+        // Get the total number of students in the group
+        const totalStudents = allStudents.length;
 
         return {
-            lecture: lecture.name,
+            lecture: lecture,
             attended: attendedStudents,
             notAttended: notAttendedStudents,
+            students: [...attendedStudents, ...notAttendedStudents],
+            totalStudents
         };
     });
 
@@ -158,6 +175,7 @@ exports.getAllAttendancesForLecture = asyncHandler(async (req, res) => {
     const allStudents = await Student.findAll({
         where: { group_id: lecture.group_id, isDeleted: false },
         attributes: ['id', 'name'],
+        include: [{ model: Group, attributes: ['id', 'name'] }],
     });
 
     const notAttendedStudents = allStudents.filter(

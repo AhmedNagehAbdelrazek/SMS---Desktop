@@ -3,6 +3,7 @@ import { Drawer, Input, Button, Form, Upload, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useAlert } from '../../context/AlertContext';
+import { Header } from 'antd/es/layout/layout';
 
 export default function EditStudentDrawer({ visible, onClose, studentId }) {
   const { addAlert } = useAlert();
@@ -76,7 +77,7 @@ export default function EditStudentDrawer({ visible, onClose, studentId }) {
 
   return (
     <Drawer
-      visible={visible}
+      open={visible}
       onClose={onClose}
       width={640}
       className='[direction:rtl]'
@@ -94,7 +95,8 @@ export default function EditStudentDrawer({ visible, onClose, studentId }) {
         </div>
       }
       // I want to hide the header
-      headerStyle={{ display: 'none' }}
+      // headerStyle={{ display: 'none' }}
+      styles={{ header: { display: 'none' } }}
     >
       {student && (
         <div className="flex flex-col gap-10 items-center">
@@ -135,9 +137,12 @@ export default function EditStudentDrawer({ visible, onClose, studentId }) {
               <Select
                 showSearch
                 getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                filterOption={(input, option) =>
+                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                }
               >
                 {groups.map((group) => (
-                  <Select.Option key={group.id} value={group.id}>
+                  <Select.Option key={group.id} value={group.id} label={group.name}>
                     {group.name}
                   </Select.Option>
                 ))}

@@ -11,7 +11,6 @@ const {
 const upload = require("../config/uploadAvatars");
 const { Op } = require("sequelize");
 const { getLastLectureId } = require("../utils/Group");
-const { getLastLectureId } = require("../utils/Group");
 
 async function deleteImage(imagePath) {
   if (require("fs").existsSync(imagePath)) {
@@ -249,7 +248,10 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
     attended,
     sortBy = "id", // Default sort by ID
     sortOrder = "ASC", // Default sort order
+    groupId
   } = req.query;
+  console.log(attended);
+  console.log(typeof attended);
 
   // Determine whether to fetch all students or apply pagination
   const fetchAll = all === "true";
@@ -271,6 +273,10 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
     ];
   }
 
+  if (groupId) {
+    whereConditions.group_id = groupId;
+  }
+
   // Sorting configuration
   const order = [[sortBy, sortOrder.toUpperCase()]];
 
@@ -288,9 +294,7 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
         order,
       });
       // Add attendance filter if provided
-    let studentAttendance = [];
-    if (attended == "true") {
-      studentAttendance = await Promise.all(
+      let studentAttendance = await Promise.all(
         students.map(async (student) => {
           const studentId = student.id;
           const hasAttended = await Attendance.findOne({
@@ -301,45 +305,26 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
             order: [["createdAt", "DESC"]],
           });
           if (hasAttended) {
-            return student
-          } else {
-            return null
+            return { ...student.toJSON(), attended: true };
+          } else if(!hasAttended){
+            return { ...student.toJSON(), attended: false };
+          }else{
+            return {...student.toJSON()};
           }
         })
       );
-    }else if( attended == "false") {
-        studentAttendance = await Promise.all(
-            students.map(async (student) => {
-              const studentId = student.id;
-      
-              let hasAttended = false;
-              if (student.group_id) {
-                  let lastLectureId = await getLastLectureId(student.group_id);
-                  hasAttended = await Attendance.findOne({
-                    where: {
-                      student_id: studentId,
-                      lecture_id: lastLectureId,
-                      isDeleted: false,
-                    },
-                    order: [["createdAt", "DESC"]],
-                  });
-              }else{
-                  studentAttendance = students;
-              }
-              
-              if (hasAttended) {
-                return null
-              } else {
-                return student
-              }
-            })
-          );
+      if (attended == "true") {
+        studentAttendance = studentAttendance?.filter(
+          (student) => student.attended == true
+        );
+      } else if (attended == "false") {
+        studentAttendance = studentAttendance?.filter(
+          (student) => student.attended == false
+        );
       }
-    else{
-        studentAttendance = students;
-    }
-      studentAttendance = studentAttendance.filter((student) => student !== null);
-
+      studentAttendance = studentAttendance?.filter(
+        (student) => student !== null
+      );
       return res.status(200).json(studentAttendance);
     }
 
@@ -365,66 +350,37 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
     const totalPages = Math.ceil(totalCount / limit);
 
     // Add attendance filter if provided
-  let studentAttendance = [];
-  if (attended == "true") {
-    studentAttendance = await Promise.all(
+    let studentAttendance = await Promise.all(
       students.map(async (student) => {
         const studentId = student.id;
-
-        let hasAttended = false;
-        if (student.group_id) {
-            let lastLectureId = await getLastLectureId(student.group_id);
-            hasAttended = await Attendance.findOne({
-              where: {
-                student_id: studentId,
-                lecture_id: lastLectureId,
-                isDeleted: false,
-              },
-              order: [["createdAt", "DESC"]],
-            });
-        }else{
-            studentAttendance = students;
-        }
-        
+        const hasAttended = await Attendance.findOne({
+          where: {
+            student_id: studentId,
+            isDeleted: false,
+          },
+          order: [["createdAt", "DESC"]],
+        });
         if (hasAttended) {
-          return student
-        } else {
-          return null
+          return { ...student.toJSON(), attended: true };
+        } else if(!hasAttended){
+          return { ...student.toJSON(), attended: false };
+        }else{
+          return student;
         }
       })
     );
-  }else if( attended == "false") {
-    studentAttendance = await Promise.all(
-        students.map(async (student) => {
-          const studentId = student.id;
-  
-          let hasAttended = false;
-          if (student.group_id) {
-              let lastLectureId = await getLastLectureId(student.group_id);
-              hasAttended = await Attendance.findOne({
-                where: {
-                  student_id: studentId,
-                  lecture_id: lastLectureId,
-                  isDeleted: false,
-                },
-                order: [["createdAt", "DESC"]],
-              });
-          }else{
-              studentAttendance = students;
-          }
-          
-          if (hasAttended) {
-            return null
-          } else {
-            return student
-          }
-        })
+    if (attended == "true") {
+      studentAttendance = studentAttendance?.filter(
+        (student) => student.attended == true
       );
-  }else{
-      studentAttendance = students
-  }
-    // remove the null from the array
-    studentAttendance = studentAttendance.filter((student) => student !== null);
+    } else if (attended == "false") {
+      studentAttendance = studentAttendance?.filter(
+        (student) => student.attended == false
+      );
+    }
+    studentAttendance = studentAttendance?.filter(
+      (student) => student !== null
+    );
 
     // Send the paginated response
     return res.status(200).json({
@@ -436,12 +392,10 @@ exports.getAllStudents = asyncHandler(async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching students:", error.message);
-    return res
-      .status(500)
-      .json({
-        message: "An error occurred while fetching students.",
-        error: error.message,
-      });
+    return res.status(500).json({
+      message: "An error occurred while fetching students.",
+      error: error.message,
+    });
   }
 });
 
@@ -464,6 +418,61 @@ exports.getStudentById = asyncHandler(async (req, res) => {
   }
 
   return res.status(200).json({ ...student.toJSON(), attendance });
+});
+
+//get the student data for attendance and if he has not attended the last lecture or more send it in the res
+exports.getStudentDataForAttendance = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const student = await Student.findByPk(id);
+  if (!student) {
+    return res.status(404).json({ message: "Student not found" });
+  }
+  // get all group lectures
+  const groupLectures = await Lecture.findAll({
+    where: {
+      group_id: student.group_id,
+      isDeleted: false,
+    },
+    order: [["lecture_number", "ASC"]],
+  });
+
+  //get all attendance for the student
+  const studentAttendance = await Attendance.findAll({
+    where: {
+      student_id: student.id,
+      isDeleted: false,
+    },
+  });
+
+  // see how many lecture the sudent missed and if he has not attended the last lecture
+  let missedLectures = 0;
+  let lastLecture = null;
+  for (let i = 0; i < groupLectures.length; i++) {
+    const lecture = groupLectures[i];
+    const isAttended = studentAttendance.some(
+      (attendance) => attendance.lecture_id === lecture.id
+    );
+    if (!isAttended) {
+      missedLectures++;
+      if (lastLecture === null) {
+        lastLecture = lecture;
+      }
+    }
+  }
+  // check if the student missed the last two lectures
+  if (lastLecture && missedLectures >= 2) {
+    return res.status(200).json({
+      missedLectures,
+      lastLecture,
+      ...student.toJSON(),
+    });
+  }
+
+  return res.status(200).json({
+    missedLectures,
+    lastLecture,
+    ...student.toJSON(),
+  });
 });
 
 exports.updateStudent = [
@@ -652,11 +661,9 @@ exports.analyzeStudentPerformance = asyncHandler(async (req, res) => {
     });
   } catch (error) {
     console.error("Error analyzing student performance:", error.message);
-    res
-      .status(500)
-      .json({
-        message: "Failed to analyze student performance.",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Failed to analyze student performance.",
+      error: error.message,
+    });
   }
 });

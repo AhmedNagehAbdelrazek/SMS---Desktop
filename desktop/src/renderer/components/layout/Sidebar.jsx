@@ -68,7 +68,7 @@ export default function Sidebar() {
         <SettingOutlined />
       ),
       label: 'الإعدادات',
-      link: null, // No link, so it will be disabled
+      link: "/settings", // No link, so it will be disabled
     },
   ];
 

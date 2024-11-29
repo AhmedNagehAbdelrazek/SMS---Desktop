@@ -207,6 +207,9 @@ export default function Group() {
           onSelect={group_id => getGroupDetails(group_id)}
           showSearch        
           getPopupContainer={(triggerNode) => triggerNode.parentNode}
+          filterOption={(input, option) =>
+            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+          }
         >
           {groups.map((group) => (
             <Select.Option key={group.id} value={group.id}>

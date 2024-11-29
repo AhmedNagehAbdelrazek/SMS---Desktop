@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FloatButton, Descriptions, Select } from 'antd';
+import { FloatButton, Descriptions, Select, Typography, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { SearchBar } from '../components/Bars';
 import { StudentTable } from '../components/Tables';
 import { AddNewExamDrawer } from '../components/Drawers';
 import { useAlert } from '../context/AlertContext';
+import InputWLable from '../components/Input/InputWLable';
 
 export default function Exam() {
   const { addAlert } = useAlert();
@@ -16,6 +17,8 @@ export default function Exam() {
   const [selectedExam, setSelectedExam] = useState(null);
   const [isEditDrawerVisible, setIsEditDrawerVisible] = useState(false);
   const [isAddDrawerVisible, setIsAddDrawerVisible] = useState(false);
+  const [studentGrade, setStudentGrade] = useState({ id: null, grade: 0 });
+  const [analysis, setAnalysis] = useState(null);
 
   useEffect(() => {
     axios
@@ -35,9 +38,10 @@ export default function Exam() {
 
   const getAllStudents = (id) => {
     axios
-      .get(`http://localhost:65000/api/student?groupId=${selectedExam?.group_id}&all=true`)
+      .get(`http://localhost:65000/api/monthexam/report/${selectedExam?.group_id}`)
       .then((response) => {
-        setStudents(response.data);
+        setStudents(response.data.students);
+        setAnalysis(response.data);
       })
       .catch((error) => {
         console.error('Error fetching students:', error);
@@ -49,6 +53,7 @@ export default function Exam() {
       .get(`http://localhost:65000/api/monthexam/report/${exam_id}`)
       .then((response) => {
         setSelectedExam(response.data);
+        console.log({exam:response.data});
       })
       .catch((error) => {
         console.error('Error fetching exam details:', error);
@@ -63,6 +68,21 @@ export default function Exam() {
   const handleEditClick = () => {
     setIsEditDrawerVisible(true);
   };
+  const handladdStudentGrade = () => {
+    axios
+    .post(`http://localhost:65000/api/monthexam/grade`,
+      {studentId:studentGrade.id,grade:studentGrade.grade,monthExamId:selectedExam.id})
+      .then(() => {
+        addAlert('تم تسجيل الحضور بنجاح', '', 'success', 3);
+        setStudentGrade({ id: null, grade: 0 });
+      }).catch((error) => {
+        console.error('Error recording attendance:', error);
+        addAlert('الطالب مسجل بالفعل', '', 'error', 3);
+      });
+  }
+  useEffect(() => {
+    console.log(students);
+  }, [students]);
 
   const examItems = [
     { key: '1', label: 'الاسم', children: selectedExam?.name },
@@ -80,9 +100,12 @@ export default function Exam() {
           onSelect={(exam_id) => getExamDetails(exam_id)}
           showSearch    
           getPopupContainer={(triggerNode) => triggerNode.parentNode}
+          filterOption={(input, option) =>
+            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+          }
         >
           {exams.map((exam) => (
-            <Select.Option key={exam.id} value={exam.id}>
+            <Select.Option key={exam.id} value={exam.id} label={exam.name}>
               {exam.name}
             </Select.Option>
           ))}
@@ -90,27 +113,31 @@ export default function Exam() {
       </div>
 
       <div className="mb-4">
-        <SearchBar url={`http://localhost:65000/api/student?groupId=${selectedExam?.group_id}&`} setFilteredData={newData => setStudents(newData)} />
+        {/* //TODO: fix the attended and absent buttons on filtter */}
+        <SearchBar onData={students} url={`http://localhost:65000/api/monthexam/report/${selectedExam?.id || ''}?${selectedExam?.group_id != null ? `groupId=${selectedExam?.group_id}&`:''}`}
+         setFilteredData={newData => setStudents(newData)
+        }
+          onDataResponse={(data)=>{
+            let students = data.students.map((student) => ({
+              key: student.id,
+              ...student,
+            }));
+            setAnalysis(data);
+            return students;
+          }}
+        />
       </div>
-
+      
       <StudentTable
-        data={students}
+        data={selectedExam ? students : []}
         onRowClick={handleRowClick}
         additionalColumns={[
           {
-            title: 'الحضور',
-            dataIndex: 'attendance',
-            key: 'attendance',
+            title: 'درجة الامتحان',
+            dataIndex: 'grade',
+            key: 'grade',
             width: '10%',
-            render: (attendance) => {
-              console.log(attendance);
-
-              return (
-                <span
-                  className={`w-2 aspect-square inline-block rounded-full ${attendance ? 'bg-green-500' : 'bg-red-500'}`}
-                />
-              );
-            },
+            render: (grade) => (grade != null ? grade :<span className="text-red-500">لم يسجل</span> || "لم يسجل"),
           },
         ]}
       />
@@ -125,6 +152,16 @@ export default function Exam() {
                 items={examItems}
                 className=""
               />
+              {analysis && <div>
+              {/*add the totalSuccessededStudents and totalFailedStudents and totalStudents and averageGrade */}
+              <Typography.Title level={4}>التحليل</Typography.Title>
+              <Descriptions bordered>
+                <Descriptions.Item label="الطلاب المسجلين">{analysis.totalStudents}</Descriptions.Item>
+                <Descriptions.Item label="الطلاب المسجلين بنجاح">{analysis.totalSuccessededStudents}</Descriptions.Item>
+                <Descriptions.Item label="الطلاب المسجلين بفشل">{analysis.totalFailedStudents}</Descriptions.Item>
+                <Descriptions.Item label="المعدل">{analysis.averageGrade}</Descriptions.Item>
+              </Descriptions>
+              </div>}
             </div>
             {/* <div className="flex gap-4">
               <Button
@@ -134,6 +171,26 @@ export default function Exam() {
                 تعديل
               </Button>
             </div> */}
+            <div className='w-full'>
+              <div className='w-full flex gap-4 flex-col'>
+                <Typography>
+                  <Typography.Title level={4}>اضافة درجة طالب</Typography.Title>
+                </Typography>
+                <div className='w-3/4 flex flex-row gap-4'>
+                    <InputWLable className='flex-1' label="رقم الطالب" placeholder="رقم الطالب"
+                     value={studentGrade?.id}
+                     onChange={(e) => {
+                      setStudentGrade((oldStudentGrade)=>({ ...oldStudentGrade, id: e.target.value }))
+                    }} />
+                    <InputWLable label="درجة الطالب" placeholder="درجة الطالب"
+                      value={studentGrade?.grade}
+                      onChange={(e)=>{
+                      setStudentGrade((oldStudentGrade)=>({ ...oldStudentGrade, grade: e.target.value }));
+                    }} />
+                </div>
+                <Button variant='solid' color='primary' className='w-[75px]' onClick={handladdStudentGrade}>اضافة</Button>
+              </div>
+            </div>
           </div>
         </div>
       )}

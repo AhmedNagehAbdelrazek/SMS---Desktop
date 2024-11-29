@@ -391,9 +391,12 @@ export default function Student() {
                 }}
                 showSearch
                 getPopupContainer={(triggerNode) => triggerNode.parentNode}
+                filterOption={(input, option) =>
+                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                }
               >
                 {groups.map((group) => (
-                  <Select.Option key={group.id} value={group.id}>
+                  <Select.Option key={group.id} value={group.id} label={group.name}>
                     {group.name}
                   </Select.Option>
                 ))}
