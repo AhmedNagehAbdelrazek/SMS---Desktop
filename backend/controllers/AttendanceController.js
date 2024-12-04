@@ -120,11 +120,11 @@ exports.getAllAttendancesForGroup = asyncHandler(async (req, res) => {
         // Get attended students for this lecture
         let attendedStudents = attendanceRecords
         .filter(att => att.lecture_id === lecture.id)
-        .map(att => ({...att.Student.toJSON(),isCompensatory:att.isCompensatory,attended:att.attended,date:att.createdAt}));
-        
+        .map(att => ({...att.Student.toJSON(),isCompensatory:att.isCompensatory,attended:att.attended,date:att.createdAt,homework_type:attendanceRecords.find(att => att.Student.id == att.Student.id).homework_type}));
+        // attendedStudents = attendedStudents.map(student => ({...student.toJSON(),attended:true}));
         // return res.json({attendedStudents})
         let attendedStudentsIds = attendedStudents.map(s=> s.id);
-        let CompensatoryAttendedStudents = attendedStudents.filter(s=> s.isCompensatory).map(s=> s.id);
+        // let CompensatoryAttendedStudents = attendedStudents.filter(s=> s.isCompensatory).map(s=> s.id);
 
         // Get not-attended students by excluding those in attendedStudents
         let notAttendedStudents = allStudents.filter(
@@ -177,16 +177,24 @@ exports.getAllAttendancesForLecture = asyncHandler(async (req, res) => {
         attributes: ['id', 'name'],
         include: [{ model: Group, attributes: ['id', 'name'] }],
     });
+    let attendedStudents = allStudents.filter(
+        student => attendedStudentIds.includes(student.id)
+    );
 
-    const notAttendedStudents = allStudents.filter(
+    let notAttendedStudents = allStudents.filter(
         student => !attendedStudentIds.includes(student.id)
     );
+    
+    attendedStudents = attendedStudents.map(student => ({...student.toJSON(),attended:true,homework_type:attendanceRecords.find(att => att.Student.id == student.id).homework_type}));
+
+    notAttendedStudents = notAttendedStudents.map(student => ({...student.toJSON(),attended:false}));
 
     // Prepare response with attended and not attended students
     const response = {
         lecture: lecture.name,
-        attended: attendanceRecords,
+        attended: attendedStudents,
         notAttended: notAttendedStudents,
+        students: [...attendedStudents, ...notAttendedStudents]
     };
 
     res.status(200).json(response);

@@ -61,13 +61,14 @@ exports.getAllStudentsWithGrades = expressAsyncHandler(async (req, res) => {
   const students = await Student.findAll({ where: { group_id: groupId } ,include:[Group]});
 
   // Convert students to plain objects
-  const plainStudents = students.map(student => ({...student.toJSON(),grade:null}));
+  const plainStudents = students.map(student => ({...student.toJSON(),grade:null,group_name:student.Group.name}));
 
   // Add the grades to the students
   for (let i = 0; i < plainStudents.length; i++) {
     for (let j = 0; j < exams.length; j++) {
       if (plainStudents[i].id == exams[j].student_id) {
         plainStudents[i].grade = exams[j].grade;
+        plainStudents[i].date = exams[j].createdAt;
         break; // Exit the loop if a grade is found
       } else {
         plainStudents[i].grade = null;

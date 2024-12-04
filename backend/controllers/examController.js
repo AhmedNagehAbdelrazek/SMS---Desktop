@@ -2,7 +2,7 @@ const expressAsyncHandler = require('express-async-handler');
 const { Exam, Month_Exam, Student, Group } = require('../models/');
 
 exports.addMonthlyExam = expressAsyncHandler(async (req, res) => {
-    const { date, groupId, name, examFullMark } = req.body;
+    const { date, groupId, name, fullMark } = req.body;
     const groupExist = await Group.findByPk(groupId);
     if (!groupExist) {
         return res.status(404).json({ message: 'Group not found' });
@@ -11,7 +11,7 @@ exports.addMonthlyExam = expressAsyncHandler(async (req, res) => {
     const exam = await Month_Exam.create({
         date,
         name,
-        exam_full_mark: examFullMark,
+        fullmark: fullMark,
         group_id: groupId,
     });
     res.status(200).json({ message: 'Monthly exam added', exam });
@@ -38,9 +38,10 @@ exports.addMonthlyExamGrade = expressAsyncHandler(async (req, res) => {
 })
 
 exports.getAllMonthlyExams = expressAsyncHandler(async (req, res) => {
-    const exams = await Month_Exam.findAll();
+    const {groupId} = req.query;
+    // get the exams if the group id is provided and get all of them if not
+    const exams = groupId ? await Month_Exam.findAll({where:{group_id:groupId}}) : await Month_Exam.findAll();
     res.status(200).json(exams);
-
 });
 
 // exports.getMonthExamFullReport = expressAsyncHandler(async (req, res) => {
@@ -118,13 +119,17 @@ exports.getMonthExamFullReport = expressAsyncHandler(async (req, res) => {
         }
     });
 
+
     // Mark attendance and grades for students
     let studentsAttendedExam = allStudents
         .filter(student => studentsAttended.includes(parseInt(student.id)))
         .map(student => ({
             ...student.toJSON(),
             Attended: true,
-            grade: exams.find(exam => exam.student_id == student.id)?.grade
+            date:exams.find(exam => exam.student_id == student.id)?.createdAt,
+            grade: exams.find(exam => exam.student_id == student.id)?.grade,
+            group_name: student.Group.name,
+            fullmark: examExist.fullmark
         }));
 
     let studentsAttendedExamIds = studentsAttendedExam.map(s => s.id);
@@ -134,7 +139,9 @@ exports.getMonthExamFullReport = expressAsyncHandler(async (req, res) => {
         .map(student => ({
             ...student.toJSON(),
             Attended: false,
-            grade: null
+            grade: null,
+            group_name: student.Group.name,
+            fullmark: examExist.fullmark
         }));
 
     let students = [...studentsAttendedExam, ...notAttendedStudents];

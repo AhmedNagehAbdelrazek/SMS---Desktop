@@ -11,8 +11,8 @@ import {
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { exec, execFile } from 'child_process';
-import { resolveHtmlPath } from './util';
+import { ChildProcess, exec, execFile } from 'child_process';
+import { isServerRunning, resolveHtmlPath, startServer, stopServer } from './util';
 
 class AppUpdater {
   constructor() {
@@ -29,6 +29,7 @@ if (!fs.existsSync(logDir)) {
 log.transports.file.resolvePath = () => path.join(logDir, 'app.log');
 
 let mainWindow: BrowserWindow | null = null;
+let isFullscreen : boolean = false;
 
 // Ensure only one instance of the app is running
 const gotTheLock = app.requestSingleInstanceLock();
@@ -139,24 +140,6 @@ if (!gotTheLock) {
     new AppUpdater();
   };
 
-  const serverPath = path.join(process.cwd(), 'resources', 'server', 'server-win.exe');
-  let serverProcess: any = null;
-
-  const startServerIfNotRunning = () => {
-    exec('netstat -an | find "65000"', (error, stdout) => {
-      if (!stdout.includes('LISTENING')) {
-        serverProcess = execFile(serverPath, (err) => {
-          if (err) console.error('Error starting server:', err);
-        });
-        console.log('Server started');
-      }
-    });
-  };
-
-  const stopServer = () => {
-    if (serverProcess) serverProcess.kill();
-  };
-
   app.on('before-quit', stopServer);
 
   app.on('window-all-closed', () => {
@@ -167,7 +150,7 @@ if (!gotTheLock) {
     .whenReady()
     .then(() => {
       createWindow();
-      startServerIfNotRunning();
+      startServer();
       app.on('activate', () => {
         if (mainWindow === null) createWindow();
       });
@@ -177,10 +160,43 @@ if (!gotTheLock) {
   ipcMain.on('window:minimize', () => mainWindow?.minimize());
 
   ipcMain.on('window:toggle-fullscreen', () => {
-    const isFullScreen = !mainWindow?.isFullScreen();
-    mainWindow?.setFullScreen(isFullScreen);
-    mainWindow?.webContents.send('window:fullscreen-changed', isFullScreen);
+    // const isFullScreen = !mainWindow?.isFullScreen();
+    // mainWindow?.setFullScreen(isFullScreen);
+    // mainWindow?.webContents.send('window:fullscreen-changed', isFullScreen);
+    console.log("toggle Fullscreen");
+    
+    if (mainWindow) {
+      isFullscreen = !isFullscreen; 
+      mainWindow.setFullScreen(isFullscreen);
+    }
   });
+  ipcMain.handle('server:check-status', async () => {
+    try {
+      const running = await isServerRunning();
+      return { status: running ? 'running' : 'stopped', success: true ,running };
+    } catch (error : any) {
+      console.error('Error checking server status:', error);
+      return { status: 'unknown', success: false, error: error.message };
+    }
+  });
+  ipcMain.handle('server:start-server', async () => {
+    try {
+      await startServer();
+      return { status: 'running' , success: true ,running:true };
+    } catch (error : any) {
+      console.error('Error checking server status:', error);
+      return { status: 'unknown', success: false, error: error.message ,running:false};
+    }
+  });
+  if(mainWindow){
+    mainWindow.on('leave-full-screen', () => {
+      isFullscreen = false;
+    });
+  
+    mainWindow.on('enter-full-screen', () => {
+      isFullscreen = true;
+    });
+  }
 
   ipcMain.on('window:close', () => mainWindow?.close());
 }
