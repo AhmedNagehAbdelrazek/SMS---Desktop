@@ -116,7 +116,9 @@ export default function StudentTable({ data, onRowClick, itemsPerPage = 10, addi
           columns={columns}
           pagination={false}
           onRow={(record) => ({
-            onClick: () => onRowClick(record),
+            onClick: () => {
+              if(onRowClick) onRowClick(record);
+            },
           })}
           rowClassName={`cursor-pointer`}
         />

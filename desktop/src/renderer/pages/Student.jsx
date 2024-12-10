@@ -59,7 +59,7 @@ export default function Student() {
         })
         .catch((error) => {
           console.error('Error fetching student:', error);
-          searchStudent(id);
+          // searchStudent(id);
         });
     }
 
@@ -85,6 +85,7 @@ export default function Student() {
     axios
       .get(`http://localhost:65000/api/group/${groupId}`)
       .then((response) => {
+        getAllStudents();
         setGroupDetails(response.data);
       })
       .catch((error) => {
@@ -110,6 +111,7 @@ export default function Student() {
 
   const handleRowClick = (student) => {
     setSelectedStudent(student);
+    getAllStudents();
   };
 
   const handleEditClick = () => {
@@ -122,7 +124,9 @@ export default function Student() {
       .then(() => {
         addAlert('تم حذف الطالب بنجاح', '', 'success', 3);
         setSelectedStudent(null);
-        searchStudent('');
+        // searchStudent('');
+        getAllStudents();
+        getAllStudents();
       })
       .catch((error) => {
         console.error('Error deleting student:', error);
@@ -137,8 +141,9 @@ export default function Student() {
       })
       .then(() => {
         addAlert('تم حظر الطالب بنجاح', '', 'success', 3);
-        searchStudent('');
+        // searchStudent('');
         setSelectedStudent({ ...selectedStudent, blocked: true });
+        getAllStudents();
       })
       .catch((error) => {
         console.error('Error blocking student:', error);
@@ -154,6 +159,7 @@ export default function Student() {
       .then(() => {
         addAlert('تم إلغاء حظر الطالب بنجاح', '', 'success', 3);
         setSelectedStudent({ ...selectedStudent, blocked: false });
+        getAllStudents();
       })
       .catch((error) => {
         console.error('Error unblocking student:', error);

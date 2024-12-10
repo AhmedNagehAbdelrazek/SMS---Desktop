@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import InputWLable from '../components/Input/InputWLable';
 import { StudentTable } from '../components/Tables';
 import { useAlert } from '../context';
+import { getDateFormatted } from '../utils/getDateFormatted';
+import { create } from 'zustand';
 
 export default function LectureExam() {
 
@@ -23,6 +25,9 @@ export default function LectureExam() {
       addAlert('حدث خطأ أثناء جلب المجموعات', '', 'error');
     });
   },[]);
+  useEffect(() => {
+    getAllStudents();
+  },[selectedLecture])
 
 //   useEffect(() => {
 //     if(!selectedLecture) return;
@@ -59,9 +64,8 @@ export default function LectureExam() {
     let lecture = selectedGroup.data.find((lecture)=>lecture.lecture.id == value);
     console.log(lecture);
     setSelectedLecture(lecture);
-
-    getAllStudents();
   }
+
   const getAllStudents = () => {
     axios.get(`http://localhost:65000/api/lecture/grade/report?groupId=${selectedGroup?.Group?.id}&lectureId=${selectedLecture?.lecture?.id}`)
     .then((response) => {
@@ -74,11 +78,12 @@ export default function LectureExam() {
     })
   }
   const handleAddGrade = () => {
+    console.log("selectedLecture",selectedLecture);
       axios.post(`http://localhost:65000/api/lecture/grade`,{
         studentId:studentGrade.id,
         grade:studentGrade.grade,
         groupId:selectedGroup.Group.id,
-        lecture_id:selectedLecture.lecture.id
+        lectureId:selectedLecture.lecture.id
       }).then(() => {
         addAlert('تم تسجيل الحضور بنجاح', '', 'success', 3);
         setStudentGrade({ id: null, grade: 0 });
@@ -142,17 +147,22 @@ export default function LectureExam() {
         {selectedLecture && (
         <>
             <div className="w-full flex flex-row gap-5">
-                <div className="w-full flex flex-col gap-2">
+                <div className="w-full flex flex-row gap-10 mx-5">
                 <h1 className="text-2xl font-bold">{selectedLecture?.lecture?.name}</h1>
-                <h1 className="text-2xl font-bold">{selectedLecture?.lecture?.createdAt}</h1>
+                <h1 className="text-2xl font-bold">{getDateFormatted(selectedLecture?.lecture?.createdAt)}</h1>
                 </div>
             </div>
-            <div className='w-full flex flex-row gap-5'>
-                <InputWLable label="رقم الطالب" placeholder="ادخل رقم الطالب" onChange={(e) => { setStudentGrade((old)=>({ id: e.target.value, grade: old?.grade }))}} value={studentGrade?.id} />
-                <InputWLable label="الدرجة" placeholder="ادخل الدرجة" onChange={(e) => { setStudentGrade((old)=>({ id: old?.id, grade: e.target.value }))}} value={studentGrade?.grade} />
-            </div>
-            <div>
-                <Button onClick={() => handleAddGrade()}>اضافة درجة</Button>
+            <div className='border rounded-xl shadow p-3 mx-3 flex flex-col gap-3 border-macos-icon border-r-4'>
+              <h2 className="text-2xl font-bold underline leading-10 underline-offset-[5px] cursor-default pointer-events-none">
+                تسجيل الحضور
+              </h2>
+              <div className='w-full flex flex-row gap-5'>
+                  <InputWLable label="رقم الطالب" placeholder="ادخل رقم الطالب" onChange={(e) => { setStudentGrade((old)=>({ id: e.target.value, grade: old?.grade }))}} value={studentGrade?.id} />
+                  <InputWLable label="الدرجة" placeholder="ادخل الدرجة" onChange={(e) => { setStudentGrade((old)=>({ id: old?.id, grade: e.target.value }))}} value={studentGrade?.grade} />
+              </div>
+              <div>
+                  <Button onClick={() => handleAddGrade()}>اضافة درجة</Button>
+              </div>
             </div>
         </>
         )}

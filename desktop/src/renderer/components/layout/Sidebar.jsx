@@ -103,7 +103,7 @@ export default function Sidebar() {
     {
       key: 'exam',
       icon: <PaperClipOutlined className="!flex" />,
-      label: 'إدارة الامتحانات',
+      label: 'أمتحان الشهر',
       link: '/exam',
     },
     {
@@ -113,7 +113,7 @@ export default function Sidebar() {
       ) : (
         <SettingOutlined className="!flex" />
       ),
-      label: 'الإعدادات',
+      label: 'السجل',
       link: '/settings', // No link, so it will be disabled
     },
   ];

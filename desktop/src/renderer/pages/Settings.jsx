@@ -1,8 +1,11 @@
-import { useEffect, useState } from "react";
-import { Select, Table, Tabs } from "antd";
+import { useEffect, useRef, useState } from "react";
+import { Button, Select, Space, Table, Tabs ,Input  } from "antd";
 import axios from "axios";
 import { useAlert } from "../context";
 const { TabPane } = Tabs;
+import { SearchOutlined } from '@ant-design/icons';
+import Highlighter from 'react-highlight-words';
+import { getFullDate } from "../utils/getDateFormatted";
 
 export default function Settings() {
   return (
@@ -46,14 +49,130 @@ const HistoryPage = () => {
 };
 
 function AttendTable() {
+  const [searchText, setSearchText] = useState('');
+  const [searchedColumn, setSearchedColumn] = useState('');
+  const searchInput = useRef(null);
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    setSearchText(selectedKeys[0]);
+    setSearchedColumn(dataIndex);
+  };
+  const handleReset = (clearFilters) => {
+    clearFilters();
+    setSearchText('');
+  };
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
+      <div
+        style={{
+          padding: 8,
+        }}
+        onKeyDown={(e) => e.stopPropagation()}
+      >
+        <Input
+          ref={searchInput}
+          placeholder={`Search ${dataIndex}`}
+          value={selectedKeys[0]}
+          onChange={(e) => {
+            setSelectedKeys(e.target.value ? [e.target.value] : []);
+                          confirm({
+                closeDropdown: false,
+              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+          }}
+          onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+          style={{
+            marginBottom: 8,
+            display: 'block',
+          }}
+        />
+        <Space>
+          <Button
+            onClick={() => {
+              clearFilters && handleReset(clearFilters);
+              setSearchText('');
+              setSearchedColumn('');
+              confirm({
+                closeDropdown: false,
+              });
+            }}
+            size="small"
+            style={{
+              width: 90,
+            }}
+          >
+            Reset
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              confirm({
+                closeDropdown: false,
+              });
+              setSearchText(selectedKeys[0]);
+              setSearchedColumn(dataIndex);
+            }}
+          >
+            Filter
+          </Button>
+          <Button
+            type="link"
+            size="small"
+            onClick={() => {
+              close();
+            }}
+          >
+            close
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined
+        style={{
+          color: filtered ? '#1677ff' : undefined,
+        }}
+      />
+    ),
+    onFilter: (value, record) =>
+      record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+    filterDropdownProps: {
+      onOpenChange(open) {
+        if (open) {
+          setTimeout(() => searchInput.current?.select(), 100);
+        }
+      },
+    },
+    render: (text) =>
+      searchedColumn === dataIndex ? (
+        <Highlighter
+          highlightStyle={{
+            backgroundColor: '#ffc069',
+            padding: 0,
+          }}
+          searchWords={[searchText]}
+          autoEscape
+          textToHighlight={text ? text.toString() : ''}
+        />
+      ) : (
+        text
+      ),
+  });
+
+
   const columns = [
-    { title: "Id", dataIndex: "id", key: "id" },
-    { title: "Name", dataIndex: "name", key: "name" },
+    { title: "Id", dataIndex: "id", key: "id", 
+      sorter: (a, b) => Number(a.id) - Number(b.id) || a - b,
+      sortDirections: ['descend', 'ascend'],
+    },
+    { title: "Name", dataIndex: "name", key: "name", ...getColumnSearchProps('name') },
     { title: "Group Name", dataIndex: "group_name", key: "group_name" ,
       render: (group_name) => (group_name != null ? group_name :<span className="text-red-500">لم يسجل</span> || "لم يسجل"),
     },
     { title: "Date", dataIndex: "date", key: "date" ,
-      render: (group_name) => (group_name != null ? group_name :<span className="text-red-500">لم يحضر</span> || "لم يحضر"),
+      render: (date) => (date != null ? getFullDate(date) :<span className="text-red-500">لم يحضر</span> || "لم يحضر"),
     },
     { title: "Attended", dataIndex: "attended", key: "attended" , render: (attended) => {
       return (
@@ -99,7 +218,7 @@ function AttendTable() {
     console.log(selectedLecture);
     if(!selectedLecture) return;
     if(selectedLecture == "no_lecture") return;
-    setStudents([...selectedLecture.attended.map((s)=>({...s,attended:true})),...selectedLecture.notAttended.map((s)=>({...s,attended:false}))]);
+    setStudents(selectedLecture.students);
   },[selectedLecture]);
 
   useEffect(() => {
@@ -110,6 +229,7 @@ function AttendTable() {
     console.log("selectedGroup",value);
     if(!value) return;
     setSelectedLecture(null);
+    setSelectedLectureId(null);
     setStudents([]);
     axios.get(`http://localhost:65000/api/attendance/group/${value}`).then((response) => {
       setSelectedGroup(response.data);
@@ -123,7 +243,11 @@ function AttendTable() {
     console.log("selectedLecture",value);
     if(!value) return;
     if(value == "no_lecture") return;
-    setSelectedLecture(selectedGroup.find((lecture)=>lecture.id == value));
+    console.log("selectedGroup",selectedGroup);
+
+    const foundLecture = selectedGroup.find((lecture)=>lecture.lecture.id == value);
+    console.log(foundLecture);
+    setSelectedLecture(foundLecture);
     setSelectedLectureId(value);
   }
 

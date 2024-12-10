@@ -3,6 +3,7 @@ import { Drawer, Input, Button, Form, Upload, Select, Image } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useAlert } from '../../context/AlertContext';
+import { useStudentsStore } from '../../Store/useStudentStore';
 
 const getBase64 = (file) =>
   new Promise((resolve, reject) => {
@@ -19,6 +20,8 @@ export default function AddNewStudentDrawer({ visible, onClose }) {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
   const [groups, setGroups] = useState([]);
+
+  const addStudent = useStudentsStore(state => state.addStudent);
 
   useEffect(() => {
     // Fetch groups
@@ -46,12 +49,7 @@ export default function AddNewStudentDrawer({ visible, onClose }) {
           formData.append('avatar', fileList[0].originFileObj);
         }
 
-        axios
-          .post('http://localhost:65000/api/student', formData, {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          })
+        addStudent(formData)
           .then(() => {
             addAlert('تم إضافة الطالب بنجاح', '', 'success', 3);
             onClose();
@@ -66,6 +64,7 @@ export default function AddNewStudentDrawer({ visible, onClose }) {
       .catch((error) => {
         console.error('Validation failed:', error);
       });
+
   };
 
   const handleUploadChange = ({ fileList: newFileList }) => {

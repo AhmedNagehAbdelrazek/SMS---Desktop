@@ -120,7 +120,7 @@ exports.getAllAttendancesForGroup = asyncHandler(async (req, res) => {
         // Get attended students for this lecture
         let attendedStudents = attendanceRecords
         .filter(att => att.lecture_id === lecture.id)
-        .map(att => ({...att.Student.toJSON(),isCompensatory:att.isCompensatory,attended:att.attended,date:att.createdAt,homework_type:attendanceRecords.find(att => att.Student.id == att.Student.id).homework_type}));
+        .map(att => ({...att.Student.toJSON(),group_name:att.Student?.Group?.name,isCompensatory:att.isCompensatory,attended:att.attended,date:att.createdAt,homework_type:attendanceRecords.find(att => att.Student.id == att.Student.id).homework_type}));
         // attendedStudents = attendedStudents.map(student => ({...student.toJSON(),attended:true}));
         // return res.json({attendedStudents})
         let attendedStudentsIds = attendedStudents.map(s=> s.id);
@@ -135,7 +135,7 @@ exports.getAllAttendancesForGroup = asyncHandler(async (req, res) => {
         // );
         // return res.json({attendedStudents})
         
-        notAttendedStudents = notAttendedStudents.map(student => ({...student.toJSON(),attended:false,isCompensatory:false}));
+        notAttendedStudents = notAttendedStudents.map(student => ({...student.toJSON(),group_name: student?.Group?.name,attended:false,isCompensatory:false}));
 
         // Get the total number of students in the group
         const totalStudents = allStudents.length;

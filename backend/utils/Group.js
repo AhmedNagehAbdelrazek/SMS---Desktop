@@ -25,7 +25,7 @@ exports.getLastLectureId = async (group_id) => {
     let lectureLectureNumber = group.last_lecture_number;
     lectureLectureNumber++;
     await group.update({ last_lecture_number: lectureLectureNumber});
-    const newLecture = await Lecture.create({ group_id, lecture_number: lectureLectureNumber, name: `Lecture ${lectureNumber}` });
+    const newLecture = await Lecture.create({ group_id, lecture_number: lectureLectureNumber, name: `Lecture ${lectureLectureNumber}` });
 
     return newLecture.id;
   }

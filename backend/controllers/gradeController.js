@@ -4,7 +4,6 @@ const { getLastLectureId } = require("../utils/Group");
 
 exports.setLectureExamGrade = expressAsyncHandler(async (req, res) => {
   const { studentId, grade, groupId ,lectureId } = req.body;
-
   // get the last lecture ID for the group to create a new exam for the student in the group
   let lecture_Id = lectureId || await getLastLectureId(groupId);
 
@@ -18,11 +17,20 @@ exports.setLectureExamGrade = expressAsyncHandler(async (req, res) => {
   }
 
   // Check if grade already exists for the student in the group for the last lecture ID
-  const existingGrade = await Lecture_Exam.findOne({ where: { student_id: studentId, lecture_id: lecture_Id } });
-  if (existingGrade) {
-    return res.status(400).json({ message: "Grade already exists" });
-  }
+  // const existingGrade = await Lecture_Exam.findOne({ where: { student_id: studentId, lecture_id: lecture_Id } });
+  // if (existingGrade) {
+  //   return res.status(400).json({ message: "Grade already exists" });
+  // }
   // Create or update the grade for the student in the group for the last lecture ID
+  const existGrade = await Lecture_Exam.findOne({ where: { student_id: studentId, lecture_id: lecture_Id } });
+  if(existGrade){
+    console.log("existGrade",existGrade);
+    // const examGrade = await Lecture_Exam.update({ grade }, { where: { student_id: studentId, lecture_id: lecture_Id } });
+    existGrade.grade = grade;
+    const examGrade = await existGrade.save();
+    res.status(200).json({ message: "Grade updated", examGrade });
+    return;
+  }
   const examGrade = await Lecture_Exam.create({
     student_id: studentId,
     lecture_id: lecture_Id,

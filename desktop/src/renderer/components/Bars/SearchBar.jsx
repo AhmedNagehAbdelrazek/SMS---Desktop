@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Input, Select, Checkbox } from 'antd';
 const { Option } = Select;
 import axios from 'axios';
+import { useStudentsStore } from '../../Store/useStudentStore';
 
 export default function SearchBar({ url, setFilteredData , onDataResponse , }) {
   const [searchText, setSearchText] = useState('');
@@ -12,25 +13,12 @@ export default function SearchBar({ url, setFilteredData , onDataResponse , }) {
   const [isAttend, setIsAttend] = useState(true);
   const [isAbsent, setIsAbsent] = useState(true);
 
+  const searchStudent = useStudentsStore(state => state.searchStudent);
+  const students = useStudentsStore(state => state.students);
 
-  const handleSearch = () => {
-    axios
-      .get(`${url}all=true&search=${searchText}&sortBy=${sortField}&sortOrder=${isReverse ? 'DESC' : 'ASC'}${isBlocked & isNotBlocked ? '' : '&blocked=' + isBlocked}${(!isAttend && !isAbsent) ? '' : (isAttend && !isAbsent) ? '&attended=true' : (!isAttend && isAbsent) ? '&attended=false' : ''}&absent=${isAbsent}`)
-      .then((response) => {
-        let data = [];
-        if(onDataResponse){
-          data = onDataResponse(response.data);
-        }else{
-          data = response.data.map((student) => ({
-            key: student.id,
-            ...student,
-          }));
-        }
-        setFilteredData(data);
-      })
-      .catch((error) => {
-        console.error('Error fetching student:', error);
-      });
+  const handleSearch = async () => {
+    await searchStudent({ url, searchText, sortField, isReverse, isBlocked, isNotBlocked, isAttend, isAbsent, onDataResponse });
+    setFilteredData(students);
   };
 
   useEffect(() => {
